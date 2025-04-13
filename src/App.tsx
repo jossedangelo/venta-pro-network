@@ -12,6 +12,9 @@ import Notifications from "./pages/Notifications";
 import Statistics from "./pages/Statistics";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Results from "./pages/Results";
+import Goals from "./pages/Goals";
+import Selly from "./pages/Selly";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +31,9 @@ const App = () => (
           <Route path="/mensajes" element={<Messages />} />
           <Route path="/notificaciones" element={<Notifications />} />
           <Route path="/estadisticas" element={<Statistics />} />
+          <Route path="/resultados" element={<Results />} />
+          <Route path="/objetivos" element={<Goals />} />
+          <Route path="/selly" element={<Selly />} />
           <Route path="/perfil" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

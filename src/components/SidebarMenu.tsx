@@ -9,7 +9,11 @@ import {
   MessageSquare, 
   Bell, 
   Settings, 
-  TrendingUp 
+  TrendingUp,
+  LineChart,
+  Target,
+  BarChart,
+  Bot
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -25,7 +29,11 @@ export function SidebarMenu({ className }: SidebarProps) {
   return (
     <div className={cn("pb-12", className)}>
       <div className="space-y-4 py-4">
+        {/* Grupo 1: Navegación principal */}
         <div className="px-3 py-2">
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+            Principal
+          </h2>
           <div className="space-y-1">
             <Link to="/">
               <Button 
@@ -72,17 +80,64 @@ export function SidebarMenu({ className }: SidebarProps) {
                 Notificaciones
               </Button>
             </Link>
+          </div>
+        </div>
+
+        {/* Grupo 2: Performance */}
+        <div className="px-3 py-2">
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+            Performance
+          </h2>
+          <div className="space-y-1">
+            <Link to="/resultados">
+              <Button 
+                variant={isActive("/resultados") ? "default" : "ghost"} 
+                className="w-full justify-start"
+              >
+                <LineChart className="mr-2 h-4 w-4" />
+                Mis Resultados
+              </Button>
+            </Link>
+            <Link to="/objetivos">
+              <Button 
+                variant={isActive("/objetivos") ? "default" : "ghost"} 
+                className="w-full justify-start"
+              >
+                <Target className="mr-2 h-4 w-4" />
+                Objetivos
+              </Button>
+            </Link>
             <Link to="/estadisticas">
               <Button 
                 variant={isActive("/estadisticas") ? "default" : "ghost"} 
                 className="w-full justify-start"
               >
-                <TrendingUp className="mr-2 h-4 w-4" />
+                <BarChart className="mr-2 h-4 w-4" />
                 Estadísticas
               </Button>
             </Link>
           </div>
         </div>
+
+        {/* Grupo 3: Asistente IA */}
+        <div className="px-3 py-2">
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+            Asistente
+          </h2>
+          <div className="space-y-1">
+            <Link to="/selly">
+              <Button 
+                variant={isActive("/selly") ? "default" : "ghost"} 
+                className="w-full justify-start"
+              >
+                <Bot className="mr-2 h-4 w-4" />
+                Selly
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Grupo 4: Configuración */}
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             Configuración
