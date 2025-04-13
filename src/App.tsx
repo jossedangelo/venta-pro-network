@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Results from "./pages/Results";
 import Goals from "./pages/Goals";
 import Selly from "./pages/Selly";
+import ActionPlan from "./pages/ActionPlan";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/resultados" element={<Results />} />
           <Route path="/objetivos" element={<Goals />} />
           <Route path="/selly" element={<Selly />} />
+          <Route path="/plan-accion" element={<ActionPlan />} />
           <Route path="/perfil" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

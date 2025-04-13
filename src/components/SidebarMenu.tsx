@@ -13,7 +13,8 @@ import {
   LineChart,
   Target,
   BarChart,
-  Bot
+  Bot,
+  CheckSquare
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -114,6 +115,15 @@ export function SidebarMenu({ className }: SidebarProps) {
               >
                 <BarChart className="mr-2 h-4 w-4" />
                 Estadísticas
+              </Button>
+            </Link>
+            <Link to="/plan-accion">
+              <Button 
+                variant={isActive("/plan-accion") ? "default" : "ghost"} 
+                className="w-full justify-start"
+              >
+                <CheckSquare className="mr-2 h-4 w-4" />
+                Mi Plan de Acción
               </Button>
             </Link>
           </div>
