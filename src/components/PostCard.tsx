@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -43,19 +43,37 @@ const PostCard = ({
   isCurrentUser = true // For demo purposes, defaulting to true
 }: PostCardProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handlePlayClick = () => {
-    if (!videoElement) return;
+    if (!videoRef.current) return;
     
     if (isPlaying) {
-      videoElement.pause();
+      videoRef.current.pause();
     } else {
-      videoElement.play();
+      videoRef.current.play();
     }
-    
-    setIsPlaying(!isPlaying);
   };
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => setIsPlaying(false);
+
+    videoElement.addEventListener('play', handlePlay);
+    videoElement.addEventListener('pause', handlePause);
+    videoElement.addEventListener('ended', handleEnded);
+
+    return () => {
+      videoElement.removeEventListener('play', handlePlay);
+      videoElement.removeEventListener('pause', handlePause);
+      videoElement.removeEventListener('ended', handleEnded);
+    };
+  }, []);
 
   const getYouTubeEmbedUrl = (url: string): string => {
     // Extract YouTube video ID
@@ -109,41 +127,54 @@ const PostCard = ({
       <CardContent className="pt-2">
         <p className="mb-4">{content}</p>
         {hasImage && imageUrl && (
-          <div className="rounded-md overflow-hidden mb-2">
+          <div className="rounded-md overflow-hidden mb-2" ref={containerRef}>
             {isVideo && isYouTubeUrl(imageUrl) ? (
-              <AspectRatio ratio={16/9}>
-                <iframe 
-                  src={getYouTubeEmbedUrl(imageUrl)} 
-                  className="w-full h-full"
-                  allowFullScreen
-                  title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                ></iframe>
-              </AspectRatio>
+              <div className="w-full relative">
+                <AspectRatio ratio={16/9}>
+                  <iframe 
+                    src={getYouTubeEmbedUrl(imageUrl)} 
+                    className="w-full h-full absolute inset-0 border-0"
+                    allowFullScreen
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  ></iframe>
+                </AspectRatio>
+              </div>
             ) : isVideo ? (
-              <AspectRatio ratio={16/9}>
-                <div className="relative w-full h-full">
-                  <video 
-                    ref={(el) => setVideoElement(el)} 
-                    src={imageUrl} 
-                    className="w-full h-full object-cover" 
-                    controls={false}
-                    onEnded={() => setIsPlaying(false)}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                  />
-                  {!isPlaying && (
+              <div className="w-full relative">
+                <AspectRatio ratio={16/9}>
+                  <div className="absolute inset-0">
+                    <video 
+                      ref={videoRef}
+                      src={imageUrl} 
+                      className="w-full h-full object-cover" 
+                      playsInline
+                    />
                     <div 
                       className="absolute inset-0 flex items-center justify-center cursor-pointer"
                       onClick={handlePlayClick}
                     >
-                      <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center">
-                        <Play className="h-8 w-8 text-white" />
-                      </div>
+                      {!isPlaying && (
+                        <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/80 transition-colors">
+                          <Play className="h-8 w-8 text-white" />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </AspectRatio>
+                    {isPlaying && (
+                      <div className="absolute bottom-4 right-4">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="rounded-full bg-black/70 border-0 hover:bg-black/80"
+                          onClick={handlePlayClick}
+                        >
+                          <Pause className="h-5 w-5 text-white" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </AspectRatio>
+              </div>
             ) : (
               <img src={imageUrl} alt="Post content" className="w-full object-cover rounded" />
             )}
