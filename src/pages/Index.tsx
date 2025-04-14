@@ -64,17 +64,16 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <NavBar />
       <div className="container grid grid-cols-12 gap-6 py-4">
-        {/* Sidebar */}
+        {/* Sidebar izquierdo */}
         <aside className="hidden md:block md:col-span-3 lg:col-span-2">
           <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
             <SidebarMenu />
           </div>
         </aside>
         
-        {/* Main content */}
+        {/* Contenido principal */}
         <main className="col-span-12 md:col-span-6 lg:col-span-7">
-          <ProfileSummary />
-          
+          {/* Compartir actualización - Movido al principio */}
           <Card className="mb-4">
             <CardContent className="p-4">
               <div className="flex gap-4 items-center mb-4">
@@ -115,10 +114,12 @@ const Index = () => {
           ))}
         </main>
         
-        {/* Right sidebar */}
+        {/* Sidebar derecho - Ahora contiene ProfileSummary */}
         <aside className="hidden lg:block lg:col-span-3">
           <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
-            <Card className="mb-4">
+            <ProfileSummary />
+            
+            <Card className="mb-4 mt-4">
               <CardContent className="p-4">
                 <h3 className="font-medium mb-3">Conexiones recomendadas</h3>
                 <div className="grid gap-4">
