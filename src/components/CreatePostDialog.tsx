@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Image, Calendar, Smile, Link as LinkIcon, X, Clock, Youtube } from "lucide-react";
+import { Image, Calendar, Smile, Link as LinkIcon, X, Clock, Youtube, Play } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
