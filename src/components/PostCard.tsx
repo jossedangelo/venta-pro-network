@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -40,7 +39,7 @@ const PostCard = ({
   imageUrl,
   isVideo = false,
   onDelete,
-  isCurrentUser = true // For demo purposes, defaulting to true
+  isCurrentUser = true // Para fines de demostración, predeterminado a verdadero
 }: PostCardProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -76,12 +75,12 @@ const PostCard = ({
   }, []);
 
   const getYouTubeEmbedUrl = (url: string): string => {
-    // Extract YouTube video ID
+    // Extraer ID de video de YouTube
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url?.match(regExp);
     
     if (match && match[2].length === 11) {
-      return `https://www.youtube.com/embed/${match[2]}?autoplay=0`;
+      return `https://www.youtube.com/embed/${match[2]}?autoplay=1`;
     }
     
     return url;
@@ -119,7 +118,7 @@ const PostCard = ({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">More options</span>
+                <span className="sr-only">Más opciones</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -138,31 +137,29 @@ const PostCard = ({
             {isVideo && isYouTubeUrl(imageUrl) ? (
               <div className="w-full relative bg-black rounded-md">
                 {!isPlaying ? (
-                  <div className="relative">
+                  <div>
                     <AspectRatio ratio={16/9}>
                       <div className="w-full h-full relative">
                         <img 
                           src={`https://img.youtube.com/vi/${getYouTubeVideoId(imageUrl)}/maxresdefault.jpg`} 
-                          alt="YouTube video thumbnail"
+                          alt="Miniatura de video de YouTube"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-black/40">
-                          <div className="absolute top-4 left-4 text-white text-2xl font-bold tracking-tight z-10">
-                            <h3 className="text-4xl mb-2">Video de YouTube</h3>
-                            <p className="text-xl font-normal opacity-80">Haz clic para reproducir este video</p>
-                          </div>
+                        <div className="absolute inset-0 bg-black/40 flex flex-col justify-start p-4">
+                          <h3 className="text-white text-4xl font-bold mb-2">Video de YouTube</h3>
+                          <p className="text-white text-xl opacity-90">Haz clic para reproducir este video</p>
                         </div>
                         <button 
-                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer z-20"
+                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer"
                           onClick={() => setIsPlaying(true)}
                         >
-                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/80 transition-colors">
+                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/90 transition-colors">
                             <Play className="h-8 w-8 text-white" />
                           </div>
                         </button>
                       </div>
                     </AspectRatio>
-                    <p className="py-2 px-3 text-sm text-blue-600 overflow-hidden whitespace-nowrap text-ellipsis">
+                    <p className="py-2 px-3 text-sm text-blue-600 bg-slate-100 overflow-hidden whitespace-nowrap text-ellipsis border-t">
                       {imageUrl}
                     </p>
                   </div>
@@ -170,14 +167,14 @@ const PostCard = ({
                   <div>
                     <AspectRatio ratio={16/9}>
                       <iframe 
-                        src={`${getYouTubeEmbedUrl(imageUrl)}&autoplay=1`}
+                        src={`${getYouTubeEmbedUrl(imageUrl)}`}
                         className="w-full h-full absolute inset-0 border-0"
                         allowFullScreen
-                        title="YouTube video player"
+                        title="Reproductor de video de YouTube"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       ></iframe>
                     </AspectRatio>
-                    <p className="py-2 px-3 text-sm text-blue-600 overflow-hidden whitespace-nowrap text-ellipsis">
+                    <p className="py-2 px-3 text-sm text-blue-600 bg-slate-100 overflow-hidden whitespace-nowrap text-ellipsis border-t">
                       {imageUrl}
                     </p>
                   </div>
@@ -225,7 +222,7 @@ const PostCard = ({
                 </AspectRatio>
               </div>
             ) : (
-              <img src={imageUrl} alt="Post content" className="w-full object-cover rounded" />
+              <img src={imageUrl} alt="Contenido del post" className="w-full object-cover rounded" />
             )}
           </div>
         )}
