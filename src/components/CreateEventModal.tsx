@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Calendar, Clock, ImageIcon, X, MapPin, Globe } from "lucide-react";
+import { Calendar, Clock, ImageIcon, X, MapPin, Globe, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -16,6 +17,71 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
+
+// List of popular countries
+const countries = [
+  { value: "es", label: "España" },
+  { value: "ad", label: "Andorra" },
+  { value: "ar", label: "Argentina" },
+  { value: "au", label: "Australia" },
+  { value: "at", label: "Austria" },
+  { value: "be", label: "Bélgica" },
+  { value: "br", label: "Brasil" },
+  { value: "ca", label: "Canadá" },
+  { value: "cl", label: "Chile" },
+  { value: "cn", label: "China" },
+  { value: "co", label: "Colombia" },
+  { value: "cr", label: "Costa Rica" },
+  { value: "hr", label: "Croacia" },
+  { value: "cu", label: "Cuba" },
+  { value: "cz", label: "República Checa" },
+  { value: "dk", label: "Dinamarca" },
+  { value: "do", label: "República Dominicana" },
+  { value: "ec", label: "Ecuador" },
+  { value: "eg", label: "Egipto" },
+  { value: "fi", label: "Finlandia" },
+  { value: "fr", label: "Francia" },
+  { value: "de", label: "Alemania" },
+  { value: "gr", label: "Grecia" },
+  { value: "hk", label: "Hong Kong" },
+  { value: "hu", label: "Hungría" },
+  { value: "is", label: "Islandia" },
+  { value: "in", label: "India" },
+  { value: "id", label: "Indonesia" },
+  { value: "ie", label: "Irlanda" },
+  { value: "il", label: "Israel" },
+  { value: "it", label: "Italia" },
+  { value: "jp", label: "Japón" },
+  { value: "kr", label: "Corea del Sur" },
+  { value: "lu", label: "Luxemburgo" },
+  { value: "my", label: "Malasia" },
+  { value: "mx", label: "México" },
+  { value: "ma", label: "Marruecos" },
+  { value: "nl", label: "Países Bajos" },
+  { value: "nz", label: "Nueva Zelanda" },
+  { value: "no", label: "Noruega" },
+  { value: "pa", label: "Panamá" },
+  { value: "pe", label: "Perú" },
+  { value: "ph", label: "Filipinas" },
+  { value: "pl", label: "Polonia" },
+  { value: "pt", label: "Portugal" },
+  { value: "ro", label: "Rumanía" },
+  { value: "ru", label: "Rusia" },
+  { value: "sa", label: "Arabia Saudita" },
+  { value: "sg", label: "Singapur" },
+  { value: "za", label: "Sudáfrica" },
+  { value: "se", label: "Suecia" },
+  { value: "ch", label: "Suiza" },
+  { value: "tw", label: "Taiwán" },
+  { value: "th", label: "Tailandia" },
+  { value: "tr", label: "Turquía" },
+  { value: "ae", label: "Emiratos Árabes Unidos" },
+  { value: "gb", label: "Reino Unido" },
+  { value: "us", label: "Estados Unidos" },
+  { value: "uy", label: "Uruguay" },
+  { value: "ve", label: "Venezuela" },
+  { value: "vn", label: "Vietnam" }
+];
 
 const eventFormSchema = z.object({
   title: z.string().min(3, { message: "El título debe tener al menos 3 caracteres" }).max(75),
@@ -28,6 +94,7 @@ const eventFormSchema = z.object({
   location: z.string().optional(),
   eventUrl: z.string().url({ message: "Introduce una URL válida" }).optional().or(z.literal("")),
   organizer: z.string(),
+  country: z.string().optional(),
   coverImage: z.any().optional(),
 });
 
@@ -41,6 +108,7 @@ interface CreateEventModalProps {
 const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) => {
   const [open, setOpen] = useState(false);
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  const [openCountrySelect, setOpenCountrySelect] = useState(false);
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -51,6 +119,7 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
       description: "",
       location: "",
       eventUrl: "",
+      country: "",
     },
   });
 
@@ -337,6 +406,64 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
                 )}
               />
             </div>
+
+            {/* País */}
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>País</FormLabel>
+                  <Popover open={openCountrySelect} onOpenChange={setOpenCountrySelect}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openCountrySelect}
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? countries.find((country) => country.value === field.value)?.label
+                            : "Seleccionar país"}
+                          <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Buscar país..."
+                          className="h-9"
+                        />
+                        <CommandEmpty>No se encontraron países</CommandEmpty>
+                        <CommandGroup className="max-h-64 overflow-auto">
+                          {countries.map((country) => (
+                            <CommandItem
+                              key={country.value}
+                              value={country.label}
+                              onSelect={() => {
+                                form.setValue("country", country.value);
+                                setOpenCountrySelect(false);
+                              }}
+                            >
+                              {country.label}
+                              {country.value === field.value && (
+                                <span className="ml-auto">✓</span>
+                              )}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Descripción */}
             <FormField

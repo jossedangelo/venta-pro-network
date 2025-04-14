@@ -1,10 +1,74 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import EventCard from "@/components/EventCard";
 import CreateEventModal from "@/components/CreateEventModal";
+
+// List of countries for display
+const countryNames: { [key: string]: string } = {
+  "es": "España",
+  "ad": "Andorra",
+  "ar": "Argentina",
+  "au": "Australia",
+  "at": "Austria",
+  "be": "Bélgica",
+  "br": "Brasil",
+  "ca": "Canadá",
+  "cl": "Chile",
+  "cn": "China",
+  "co": "Colombia",
+  "cr": "Costa Rica",
+  "hr": "Croacia",
+  "cu": "Cuba",
+  "cz": "República Checa",
+  "dk": "Dinamarca",
+  "do": "República Dominicana",
+  "ec": "Ecuador",
+  "eg": "Egipto",
+  "fi": "Finlandia",
+  "fr": "Francia",
+  "de": "Alemania",
+  "gr": "Grecia",
+  "hk": "Hong Kong",
+  "hu": "Hungría",
+  "is": "Islandia",
+  "in": "India",
+  "id": "Indonesia",
+  "ie": "Irlanda",
+  "il": "Israel",
+  "it": "Italia",
+  "jp": "Japón",
+  "kr": "Corea del Sur",
+  "lu": "Luxemburgo",
+  "my": "Malasia",
+  "mx": "México",
+  "ma": "Marruecos",
+  "nl": "Países Bajos",
+  "nz": "Nueva Zelanda",
+  "no": "Noruega",
+  "pa": "Panamá",
+  "pe": "Perú",
+  "ph": "Filipinas",
+  "pl": "Polonia",
+  "pt": "Portugal",
+  "ro": "Rumanía",
+  "ru": "Rusia",
+  "sa": "Arabia Saudita",
+  "sg": "Singapur",
+  "za": "Sudáfrica",
+  "se": "Suecia",
+  "ch": "Suiza",
+  "tw": "Taiwán",
+  "th": "Tailandia",
+  "tr": "Turquía",
+  "ae": "Emiratos Árabes Unidos",
+  "gb": "Reino Unido",
+  "us": "Estados Unidos",
+  "uy": "Uruguay",
+  "ve": "Venezuela",
+  "vn": "Vietnam"
+};
 
 // Datos de ejemplo para eventos
 const sampleEvents = [
@@ -15,7 +79,8 @@ const sampleEvents = [
     imageUrl: "https://images.unsplash.com/photo-1591115765373-5207764f72e4?q=80&w=1470&auto=format&fit=crop",
     organizer: "TechVentas Academy",
     attendees: 45,
-    isOnline: true
+    isOnline: true,
+    country: "es"
   },
   {
     id: "2",
@@ -24,7 +89,8 @@ const sampleEvents = [
     imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1470&auto=format&fit=crop",
     organizer: "Health Innovation Network",
     attendees: 78,
-    isOnline: true
+    isOnline: true,
+    country: "co"
   },
   {
     id: "3",
@@ -33,7 +99,8 @@ const sampleEvents = [
     imageUrl: "https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=1374&auto=format&fit=crop",
     organizer: "SportsMed Association",
     attendees: 120,
-    isOnline: true
+    isOnline: true,
+    country: "mx"
   }
 ];
 
@@ -48,7 +115,8 @@ const recommendedEvents = [
     organizer: "CEO Sleepout UK",
     attendees: 20,
     isOnline: false,
-    location: "Balmoral Stadium, Aberdeen"
+    location: "Balmoral Stadium, Aberdeen",
+    country: "gb"
   },
   {
     id: "5",
@@ -58,7 +126,8 @@ const recommendedEvents = [
     organizer: "Peraga Expo",
     attendees: 1,
     isOnline: false,
-    location: "Jakarta International Expo"
+    location: "Jakarta International Expo",
+    country: "id"
   },
   {
     id: "6",
@@ -68,7 +137,8 @@ const recommendedEvents = [
     organizer: "Quantum.Tech",
     attendees: 33,
     isOnline: false,
-    location: "Conrad Hotel, Washington D.C."
+    location: "Conrad Hotel, Washington D.C.",
+    country: "us"
   }
 ];
 
@@ -87,7 +157,8 @@ const Events = () => {
       organizer: eventData.organizer,
       attendees: 0,
       isOnline: eventData.eventType === "online",
-      location: eventData.location
+      location: eventData.location,
+      country: eventData.country
     };
     
     setMyEvents([newEvent, ...myEvents]);

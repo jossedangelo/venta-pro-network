@@ -1,7 +1,7 @@
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowUpRight, Users } from "lucide-react";
+import { ArrowUpRight, Users, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +16,7 @@ interface EventCardProps {
     attendees: number;
     isOnline?: boolean;
     location?: string;
+    country?: string;
   };
   variant?: "horizontal" | "vertical";
 }
@@ -48,6 +49,13 @@ const EventCard = ({ event, variant = "vertical" }: EventCardProps) => {
           <span className="mx-1">•</span>
           <Users className="h-3 w-3 inline mr-1" />
           <span>{event.attendees} asistentes</span>
+          {event.country && (
+            <>
+              <span className="mx-1">•</span>
+              <MapPin className="h-3 w-3 inline mr-1" />
+              <span>{event.country}</span>
+            </>
+          )}
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="w-full">Ver</Button>
