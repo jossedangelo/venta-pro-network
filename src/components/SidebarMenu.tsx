@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Home, 
-  BriefcaseBusiness, 
+  Briefcase, 
   Users, 
   MessageSquare, 
   Bell, 
@@ -59,7 +59,7 @@ export function SidebarMenu({ className }: SidebarProps) {
                 variant={isActive("/empleos") ? "default" : "ghost"} 
                 className="w-full justify-start"
               >
-                <BriefcaseBusiness className="mr-2 h-4 w-4" />
+                <Briefcase className="mr-2 h-4 w-4" />
                 Empleos
               </Button>
             </Link>

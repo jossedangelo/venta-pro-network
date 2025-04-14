@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BriefcaseBusiness, MapPin, Building, Clock } from "lucide-react";
+import { Briefcase, MapPin, Building, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface JobCardProps {
@@ -21,7 +21,7 @@ const JobCard = ({ job }: JobCardProps) => {
     <Card className="mb-4">
       <CardHeader className="flex flex-row items-start gap-4 space-y-0">
         <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary/10">
-          <BriefcaseBusiness className="h-6 w-6 text-primary" />
+          <Briefcase className="h-6 w-6 text-primary" />
         </div>
         <div className="space-y-1">
           <Link to="/empleos/detalle" className="font-semibold hover:underline text-lg">
