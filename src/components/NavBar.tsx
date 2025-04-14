@@ -21,6 +21,10 @@ const NavBar = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
+  
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container flex h-14 items-center px-2 md:px-4">
@@ -77,7 +81,7 @@ const NavBar = () => {
             <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
               <SheetContent side="left" className="p-0 w-[280px]">
                 <div className="h-full py-4">
-                  <SidebarMenu />
+                  <SidebarMenu closeSidebar={closeSidebar} />
                 </div>
               </SheetContent>
             </Sheet>

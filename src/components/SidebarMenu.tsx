@@ -16,15 +16,27 @@ import {
   Bot,
   CheckSquare
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Sheet } from "@/components/ui/sheet";
+import { useContext } from "react";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  closeSidebar?: () => void;
+}
 
-export function SidebarMenu({ className }: SidebarProps) {
+export function SidebarMenu({ className, closeSidebar }: SidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleMenuClick = (path: string) => {
+    if (closeSidebar) {
+      closeSidebar();
+    }
+    navigate(path);
   };
 
   return (
@@ -36,51 +48,46 @@ export function SidebarMenu({ className }: SidebarProps) {
             Principal
           </h2>
           <div className="space-y-1">
-            <Link to="/">
-              <Button 
-                variant={isActive("/") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Home className="mr-2 h-4 w-4" />
-                Inicio
-              </Button>
-            </Link>
-            <Link to="/red">
-              <Button 
-                variant={isActive("/red") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Mi Red
-              </Button>
-            </Link>
-            <Link to="/empleos">
-              <Button 
-                variant={isActive("/empleos") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Briefcase className="mr-2 h-4 w-4" />
-                Empleos
-              </Button>
-            </Link>
-            <Link to="/mensajes">
-              <Button 
-                variant={isActive("/mensajes") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Mensajes
-              </Button>
-            </Link>
-            <Link to="/notificaciones">
-              <Button 
-                variant={isActive("/notificaciones") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Bell className="mr-2 h-4 w-4" />
-                Notificaciones
-              </Button>
-            </Link>
+            <Button 
+              variant={isActive("/") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/")}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              Inicio
+            </Button>
+            <Button 
+              variant={isActive("/red") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/red")}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Mi Red
+            </Button>
+            <Button 
+              variant={isActive("/empleos") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/empleos")}
+            >
+              <Briefcase className="mr-2 h-4 w-4" />
+              Empleos
+            </Button>
+            <Button 
+              variant={isActive("/mensajes") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/mensajes")}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Mensajes
+            </Button>
+            <Button 
+              variant={isActive("/notificaciones") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/notificaciones")}
+            >
+              <Bell className="mr-2 h-4 w-4" />
+              Notificaciones
+            </Button>
           </div>
         </div>
 
@@ -90,42 +97,38 @@ export function SidebarMenu({ className }: SidebarProps) {
             Performance
           </h2>
           <div className="space-y-1">
-            <Link to="/resultados">
-              <Button 
-                variant={isActive("/resultados") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <LineChart className="mr-2 h-4 w-4" />
-                Mis Resultados
-              </Button>
-            </Link>
-            <Link to="/objetivos">
-              <Button 
-                variant={isActive("/objetivos") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Target className="mr-2 h-4 w-4" />
-                Objetivos
-              </Button>
-            </Link>
-            <Link to="/estadisticas">
-              <Button 
-                variant={isActive("/estadisticas") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <BarChart className="mr-2 h-4 w-4" />
-                Estadísticas
-              </Button>
-            </Link>
-            <Link to="/plan-accion">
-              <Button 
-                variant={isActive("/plan-accion") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <CheckSquare className="mr-2 h-4 w-4" />
-                Mi Plan de Acción
-              </Button>
-            </Link>
+            <Button 
+              variant={isActive("/resultados") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/resultados")}
+            >
+              <LineChart className="mr-2 h-4 w-4" />
+              Mis Resultados
+            </Button>
+            <Button 
+              variant={isActive("/objetivos") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/objetivos")}
+            >
+              <Target className="mr-2 h-4 w-4" />
+              Objetivos
+            </Button>
+            <Button 
+              variant={isActive("/estadisticas") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/estadisticas")}
+            >
+              <BarChart className="mr-2 h-4 w-4" />
+              Estadísticas
+            </Button>
+            <Button 
+              variant={isActive("/plan-accion") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/plan-accion")}
+            >
+              <CheckSquare className="mr-2 h-4 w-4" />
+              Mi Plan de Acción
+            </Button>
           </div>
         </div>
 
@@ -135,15 +138,14 @@ export function SidebarMenu({ className }: SidebarProps) {
             Asistente
           </h2>
           <div className="space-y-1">
-            <Link to="/selly">
-              <Button 
-                variant={isActive("/selly") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Bot className="mr-2 h-4 w-4" />
-                Selly
-              </Button>
-            </Link>
+            <Button 
+              variant={isActive("/selly") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/selly")}
+            >
+              <Bot className="mr-2 h-4 w-4" />
+              Selly
+            </Button>
           </div>
         </div>
 
@@ -153,15 +155,14 @@ export function SidebarMenu({ className }: SidebarProps) {
             Configuración
           </h2>
           <div className="space-y-1">
-            <Link to="/configuracion">
-              <Button 
-                variant={isActive("/configuracion") ? "default" : "ghost"} 
-                className="w-full justify-start"
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Ajustes
-              </Button>
-            </Link>
+            <Button 
+              variant={isActive("/configuracion") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/configuracion")}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Ajustes
+            </Button>
           </div>
         </div>
       </div>
