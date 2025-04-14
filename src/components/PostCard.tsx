@@ -92,6 +92,13 @@ const PostCard = ({
     return url.includes('youtube.com') || url.includes('youtu.be');
   };
 
+  const getYouTubeVideoId = (url?: string): string | null => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
   return (
     <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300">
       <CardHeader className="flex flex-row items-start justify-between pb-2">
@@ -129,19 +136,55 @@ const PostCard = ({
         {hasImage && imageUrl && (
           <div className="rounded-md overflow-hidden mb-2" ref={containerRef}>
             {isVideo && isYouTubeUrl(imageUrl) ? (
-              <div className="w-full relative">
-                <AspectRatio ratio={16/9}>
-                  <iframe 
-                    src={getYouTubeEmbedUrl(imageUrl)} 
-                    className="w-full h-full absolute inset-0 border-0"
-                    allowFullScreen
-                    title="YouTube video player"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  ></iframe>
-                </AspectRatio>
+              <div className="w-full relative bg-black rounded-md">
+                {!isPlaying ? (
+                  <div className="relative">
+                    <AspectRatio ratio={16/9}>
+                      <div className="w-full h-full relative">
+                        <img 
+                          src={`https://img.youtube.com/vi/${getYouTubeVideoId(imageUrl)}/maxresdefault.jpg`} 
+                          alt="YouTube video thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40">
+                          <div className="absolute top-4 left-4 text-white text-2xl font-bold tracking-tight z-10">
+                            <h3 className="text-4xl mb-2">Video de YouTube</h3>
+                            <p className="text-xl font-normal opacity-80">Haz clic para reproducir este video</p>
+                          </div>
+                        </div>
+                        <button 
+                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer z-20"
+                          onClick={() => setIsPlaying(true)}
+                        >
+                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/80 transition-colors">
+                            <Play className="h-8 w-8 text-white" />
+                          </div>
+                        </button>
+                      </div>
+                    </AspectRatio>
+                    <p className="py-2 px-3 text-sm text-blue-600 overflow-hidden whitespace-nowrap text-ellipsis">
+                      {imageUrl}
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <AspectRatio ratio={16/9}>
+                      <iframe 
+                        src={`${getYouTubeEmbedUrl(imageUrl)}&autoplay=1`}
+                        className="w-full h-full absolute inset-0 border-0"
+                        allowFullScreen
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      ></iframe>
+                    </AspectRatio>
+                    <p className="py-2 px-3 text-sm text-blue-600 overflow-hidden whitespace-nowrap text-ellipsis">
+                      {imageUrl}
+                    </p>
+                  </div>
+                )}
               </div>
             ) : isVideo ? (
-              <div className="w-full relative">
+              <div className="w-full relative bg-black rounded-md">
                 <AspectRatio ratio={16/9}>
                   <div className="absolute inset-0">
                     <video 
@@ -150,16 +193,22 @@ const PostCard = ({
                       className="w-full h-full object-cover" 
                       playsInline
                     />
-                    <div 
-                      className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                      onClick={handlePlayClick}
-                    >
-                      {!isPlaying && (
-                        <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/80 transition-colors">
-                          <Play className="h-8 w-8 text-white" />
+                    {!isPlaying && (
+                      <div className="absolute inset-0">
+                        <div className="absolute top-4 left-4 text-white text-2xl font-bold tracking-tight">
+                          <h3 className="text-4xl mb-2">Video</h3>
+                          <p className="text-xl font-normal opacity-80">Haz clic para reproducir</p>
                         </div>
-                      )}
-                    </div>
+                        <button 
+                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer"
+                          onClick={handlePlayClick}
+                        >
+                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/80 transition-colors">
+                            <Play className="h-8 w-8 text-white" />
+                          </div>
+                        </button>
+                      </div>
+                    )}
                     {isPlaying && (
                       <div className="absolute bottom-4 right-4">
                         <Button 
