@@ -3,12 +3,75 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { BadgeCheck, Edit2, Users } from "lucide-react";
+import { BadgeCheck, Edit2, Users, ImagePlus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 const ProfileSummary = () => {
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
+
+  const handleBannerUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Verificar el tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Formato no válido",
+          description: "Por favor, sube una imagen en formato JPG, PNG o WebP",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Verificar el tamaño del archivo (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Archivo demasiado grande",
+          description: "El tamaño máximo permitido es 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Crear URL para previsualización
+      const imageUrl = URL.createObjectURL(file);
+      setBannerImage(imageUrl);
+      
+      toast({
+        title: "Banner actualizado",
+        description: "Tu imagen de banner se ha actualizado correctamente",
+      });
+    }
+  };
+
   return (
     <Card className="mb-4">
-      <div className="h-24 bg-gradient-to-r from-secondary to-[#1a294c] rounded-t-lg"></div>
+      <div 
+        className="h-24 relative"
+        style={{ 
+          backgroundColor: "#1a294c",
+          backgroundImage: bannerImage ? `url(${bannerImage})` : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <label 
+          htmlFor="banner-upload" 
+          className="absolute bottom-2 right-2 cursor-pointer"
+          title="Subir banner (Dimensiones recomendadas: 1500x400px)"
+        >
+          <div className="bg-background/70 p-1.5 rounded-full hover:bg-background/90 transition-colors">
+            <ImagePlus className="h-5 w-5 text-foreground" />
+          </div>
+          <input 
+            id="banner-upload" 
+            type="file" 
+            accept="image/jpeg,image/png,image/webp" 
+            className="hidden" 
+            onChange={handleBannerUpload}
+          />
+        </label>
+      </div>
       <CardHeader className="relative pb-2">
         <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
           <AvatarImage src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" alt="@usuario" />
