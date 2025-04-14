@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Bot, User, CheckSquare } from "lucide-react";
+import { Send, Bot, User, CheckSquare, Loader } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -32,6 +32,16 @@ interface ActionPlan {
   feedback: string;
 }
 
+// Simulación de almacenamiento local para persistir el plan creado
+const getStoredPlans = (): ActionPlan[] => {
+  const storedPlans = localStorage.getItem('actionPlans');
+  return storedPlans ? JSON.parse(storedPlans) : [];
+};
+
+const savePlans = (plans: ActionPlan[]) => {
+  localStorage.setItem('actionPlans', JSON.stringify(plans));
+};
+
 const Selly = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -44,6 +54,7 @@ const Selly = () => {
     },
   ]);
   const [input, setInput] = useState("");
+  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Ejemplos de cómo Selly puede ayudar
@@ -101,14 +112,36 @@ const Selly = () => {
   };
 
   const handleCreateActionPlan = () => {
+    setIsCreatingPlan(true);
+    
+    // Extraer la última consulta del usuario para personalizar el plan
+    const lastUserMessageContent = messages
+      .filter(m => m.sender === "user")
+      .pop()?.content || "mejorar ventas";
+    
     // En una aplicación real, crearías un plan de acción basado en la conversación actual
     // y lo guardarías en una base de datos
+    const today = new Date();
     const newActionPlan: ActionPlan = {
       id: Date.now().toString(),
-      date: new Date(),
-      title: "Plan para mejorar tasa de conversión",
-      description: "Basado en nuestra conversación sobre estrategias de conversión",
-      tasks: [
+      date: today,
+      title: lastUserMessageContent.includes("conversión") 
+        ? "Plan para mejorar tasa de conversión"
+        : lastUserMessageContent.includes("rutina")
+        ? "Plan de rutina diaria para ventas" 
+        : lastUserMessageContent.includes("difíciles")
+        ? "Plan para manejar clientes difíciles"
+        : "Plan para mejorar resultados de ventas",
+      description: "Basado en nuestra conversación sobre estrategias de ventas",
+      tasks: lastUserMessageContent.includes("difíciles") ? [
+        { id: "t1", text: "Escucha activamente sus preocupaciones sin interrumpir", completed: false },
+        { id: "t2", text: "Reconoce sus objeciones como válidas", completed: false },
+        { id: "t3", text: "Haz preguntas para entender el verdadero problema", completed: false },
+        { id: "t4", text: "Personaliza tu solución a sus necesidades específicas", completed: false },
+        { id: "t5", text: "Ofrece testimonios o casos de éxito similares", completed: false },
+        { id: "t6", text: "No presiones, pero mantén el control", completed: false },
+        { id: "t7", text: "Considera opciones flexibles si el precio es un obstáculo", completed: false }
+      ] : [
         { id: "t1", text: "Analizar los últimos 20 casos perdidos", completed: false },
         { id: "t2", text: "Revisar el script de la primera llamada", completed: false },
         { id: "t3", text: "Preparar 3 nuevos argumentos de venta", completed: false },
@@ -119,27 +152,45 @@ const Selly = () => {
       feedback: ""
     };
 
-    // En una app real, guardarías este plan en una base de datos
-    // Aquí simulamos ese guardado mostrando una notificación
+    // Guardar el plan en localStorage
+    const existingPlans = getStoredPlans();
+    const updatedPlans = [newActionPlan, ...existingPlans];
+    savePlans(updatedPlans);
     
-    // Añadir mensaje de confirmación
-    const confirmationMessage: Message = {
+    // Añadir mensaje de confirmación con estado de carga
+    const loadingMessage: Message = {
       id: Date.now().toString(),
       sender: "assistant",
-      content: `¡Perfecto! He creado un plan de acción para ti con 5 tareas específicas para mejorar tu tasa de conversión. Puedes verlo en la sección "Mi Plan de Acción".`,
+      content: `Estoy creando tu plan de acción personalizado...`,
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, confirmationMessage]);
+    setMessages((prev) => [...prev, loadingMessage]);
     
-    toast({
-      title: "Plan de acción creado",
-      description: "Tu nuevo plan de acción está disponible en la sección 'Mi Plan de Acción'.",
-    });
-    
-    // En una app real, podrías redirigir al usuario a la página del plan de acción
+    // Simular tiempo de creación del plan
     setTimeout(() => {
-      navigate("/plan-accion");
+      // Reemplazar mensaje de carga con confirmación
+      setMessages((prev) => {
+        const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id);
+        return [...withoutLoading, {
+          id: Date.now().toString(),
+          sender: "assistant",
+          content: `¡Perfecto! He creado un plan de acción para ti con ${newActionPlan.tasks.length} tareas específicas. Puedes verlo en la sección "Mi Plan de Acción".`,
+          timestamp: new Date(),
+        }];
+      });
+      
+      setIsCreatingPlan(false);
+      
+      toast({
+        title: "Plan de acción creado",
+        description: "Tu nuevo plan de acción está disponible en la sección 'Mi Plan de Acción'.",
+      });
+      
+      // En una app real, podrías redirigir al usuario a la página del plan de acción
+      setTimeout(() => {
+        navigate("/plan-accion");
+      }, 2000);
     }, 2000);
   };
 
@@ -233,14 +284,20 @@ const Selly = () => {
                           size="sm" 
                           onClick={handleCreateActionPlan}
                           className="flex items-center gap-1"
+                          disabled={isCreatingPlan}
                         >
-                          <CheckSquare className="h-4 w-4" />
-                          Sí, crea un plan de acción
+                          {isCreatingPlan ? (
+                            <Loader className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <CheckSquare className="h-4 w-4" />
+                          )}
+                          {isCreatingPlan ? "Creando plan..." : "Sí, crea un plan de acción"}
                         </Button>
                         <Button 
                           size="sm" 
                           variant="outline"
                           onClick={handleSkipActionPlan}
+                          disabled={isCreatingPlan}
                         >
                           No hace falta
                         </Button>

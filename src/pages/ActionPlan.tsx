@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Card, 
   CardContent, 
@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, CheckSquare, Bot } from "lucide-react";
+import { CalendarIcon, CheckSquare, Bot, Loader } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -36,44 +36,57 @@ interface ActionPlanData {
   feedback: string;
 }
 
+// Simulación de almacenamiento local para persistir planes de acción
+const getStoredPlans = (): ActionPlanData[] => {
+  const storedPlans = localStorage.getItem('actionPlans');
+  if (!storedPlans) return [];
+  
+  // Convertir las fechas de string a objetos Date
+  try {
+    const parsed = JSON.parse(storedPlans);
+    return parsed.map((plan: any) => ({
+      ...plan,
+      date: new Date(plan.date)
+    }));
+  } catch (error) {
+    console.error("Error al parsear planes guardados:", error);
+    return [];
+  }
+};
+
+const savePlans = (plans: ActionPlanData[]) => {
+  localStorage.setItem('actionPlans', JSON.stringify(plans));
+};
+
 const ActionPlan = () => {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Mock data - in a real application, this would come from a database
-  const [actionPlans, setActionPlans] = useState<ActionPlanData[]>([
-    {
-      id: "1",
-      date: new Date(2025, 3, 10),
-      title: "Mejorar tasa de conversión",
-      description: "Plan para aumentar el ratio de conversión de prospectos en un 15%",
-      tasks: [
-        { id: "t1", text: "Analizar los últimos 20 casos perdidos", completed: true },
-        { id: "t2", text: "Revisar el script de la primera llamada", completed: false },
-        { id: "t3", text: "Preparar 3 nuevos argumentos de venta", completed: false },
-        { id: "t4", text: "Practicar manejo de objeciones comunes", completed: false },
-        { id: "t5", text: "Implementar seguimiento automatizado", completed: false }
-      ],
-      completed: false,
-      feedback: ""
-    },
-    {
-      id: "2",
-      date: new Date(2025, 3, 12),
-      title: "Mejorar discurso de ventas",
-      description: "Plan para refinar el elevator pitch y mejorar la primera impresión",
-      tasks: [
-        { id: "t1", text: "Grabar mi discurso actual y analizarlo", completed: false },
-        { id: "t2", text: "Identificar 3 puntos débiles del discurso", completed: false },
-        { id: "t3", text: "Crear un nuevo discurso más conciso", completed: false },
-        { id: "t4", text: "Practicar frente al espejo 10 minutos diarios", completed: false }
-      ],
-      completed: false,
-      feedback: ""
-    }
-  ]);
+  // Obtener los planes de acción desde localStorage
+  const [actionPlans, setActionPlans] = useState<ActionPlanData[]>([]);
+
+  useEffect(() => {
+    // Simular tiempo de carga
+    setTimeout(() => {
+      const storedPlans = getStoredPlans();
+      setActionPlans(storedPlans);
+      
+      // Si hay planes almacenados y venimos de crear uno nuevo,
+      // establecer la fecha seleccionada como la del plan más reciente
+      if (storedPlans.length > 0) {
+        // Ordenar planes por fecha (más reciente primero)
+        const sortedPlans = [...storedPlans].sort((a, b) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        setSelectedDate(new Date(sortedPlans[0].date));
+      }
+      
+      setIsLoading(false);
+    }, 1000);
+  }, []);
 
   // Get the action plan for the selected date
   const currentPlan = actionPlans.find(plan => 
@@ -106,6 +119,7 @@ const ActionPlan = () => {
     });
     
     setActionPlans(updatedPlans);
+    savePlans(updatedPlans);
     
     // If all tasks are completed, show the feedback form
     const updatedPlan = updatedPlans.find(p => p.id === currentPlan.id);
@@ -133,6 +147,7 @@ const ActionPlan = () => {
     });
     
     setActionPlans(updatedPlans);
+    savePlans(updatedPlans);
     setShowFeedbackForm(false);
     
     toast({
@@ -176,7 +191,14 @@ const ActionPlan = () => {
         </Popover>
       </div>
       
-      {currentPlan ? (
+      {isLoading ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Loader className="h-8 w-8 animate-spin text-primary mb-4" />
+            <p className="text-lg text-muted-foreground">Cargando tu plan de acción...</p>
+          </CardContent>
+        </Card>
+      ) : currentPlan ? (
         <Card>
           <CardHeader>
             <CardTitle>{currentPlan.title}</CardTitle>
