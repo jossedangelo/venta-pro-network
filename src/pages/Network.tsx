@@ -1,8 +1,8 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ConnectionCard from "@/components/ConnectionCard";
-import { Search } from "lucide-react";
+import SearchInput from "@/components/SearchInput";
 
 const connections = [
   {
@@ -110,11 +110,9 @@ const Network = () => {
         </CardHeader>
         <CardContent>
           <div className="relative mb-6">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar en mi red..."
-              className="pl-8 w-full lg:w-1/2"
+            <SearchInput 
+              placeholder="Buscar en mi red..." 
+              className="w-full lg:w-1/2" 
             />
           </div>
           

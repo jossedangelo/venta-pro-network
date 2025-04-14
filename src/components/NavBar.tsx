@@ -1,8 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Bell, MessageSquare, Search, User, Briefcase, Menu } from "lucide-react";
+import { Bell, MessageSquare, User, Briefcase, Menu } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   DropdownMenu, 
@@ -16,6 +15,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import SidebarMenu from "@/components/SidebarMenu";
+import SearchInput from "@/components/SearchInput";
 
 const NavBar = () => {
   const isMobile = useIsMobile();
@@ -97,14 +97,10 @@ const NavBar = () => {
             
             <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
               <div className="w-full md:w-80 lg:w-96">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Buscar vendedores, empresas, oportunidades..."
-                    className="w-full bg-background pl-8 md:w-80 lg:w-96"
-                  />
-                </div>
+                <SearchInput 
+                  placeholder="Buscar vendedores, empresas, oportunidades..." 
+                  className="w-full bg-background md:w-80 lg:w-96" 
+                />
               </div>
               
               <nav className="flex items-center space-x-1">

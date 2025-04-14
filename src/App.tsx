@@ -19,35 +19,38 @@ import Selly from "./pages/Selly";
 import ActionPlan from "./pages/ActionPlan";
 import Events from "./pages/Events";
 import EventDetailPage from "./pages/EventDetailPage";
+import { SearchProvider } from "./contexts/SearchContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/red" element={<Network />} />
-            <Route path="/empleos" element={<Jobs />} />
-            <Route path="/mensajes" element={<Messages />} />
-            <Route path="/notificaciones" element={<Notifications />} />
-            <Route path="/eventos" element={<Events />} />
-            <Route path="/eventos/:id" element={<EventDetailPage />} />
-            <Route path="/estadisticas" element={<Statistics />} />
-            <Route path="/resultados" element={<Results />} />
-            <Route path="/objetivos" element={<Goals />} />
-            <Route path="/selly" element={<Selly />} />
-            <Route path="/plan-accion" element={<ActionPlan />} />
-            <Route path="/perfil" element={<Profile />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <SearchProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/red" element={<Network />} />
+              <Route path="/empleos" element={<Jobs />} />
+              <Route path="/mensajes" element={<Messages />} />
+              <Route path="/notificaciones" element={<Notifications />} />
+              <Route path="/eventos" element={<Events />} />
+              <Route path="/eventos/:id" element={<EventDetailPage />} />
+              <Route path="/estadisticas" element={<Statistics />} />
+              <Route path="/resultados" element={<Results />} />
+              <Route path="/objetivos" element={<Goals />} />
+              <Route path="/selly" element={<Selly />} />
+              <Route path="/plan-accion" element={<ActionPlan />} />
+              <Route path="/perfil" element={<Profile />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </SearchProvider>
   </QueryClientProvider>
 );
 
