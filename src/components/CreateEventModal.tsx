@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -442,33 +443,41 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput 
-                          placeholder="Buscar país..." 
-                          value={searchValue}
-                          onValueChange={setSearchValue}
-                          className="h-9"
-                        />
-                        <CommandEmpty>No se encontraron países</CommandEmpty>
-                        <CommandGroup>
-                          {filteredCountries.map((country) => (
-                            <CommandItem
-                              key={country.value}
-                              value={country.label}
-                              onSelect={() => {
-                                form.setValue("country", country.value);
-                                setOpenCountrySelect(false);
-                                setSearchValue("");
-                              }}
-                            >
-                              {country.label}
-                              {country.value === field.value && (
-                                <span className="ml-auto">✓</span>
-                              )}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
+                      <div className="w-full">
+                        <div className="flex items-center border-b px-3">
+                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                          <input 
+                            className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                            placeholder="Buscar país..." 
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                          />
+                        </div>
+                        <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+                          {filteredCountries.length === 0 ? (
+                            <div className="py-6 text-center text-sm">No se encontraron países</div>
+                          ) : (
+                            <div className="overflow-hidden p-1 text-foreground">
+                              {filteredCountries.map((country) => (
+                                <div
+                                  key={country.value}
+                                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground"
+                                  onClick={() => {
+                                    form.setValue("country", country.value);
+                                    setOpenCountrySelect(false);
+                                    setSearchValue("");
+                                  }}
+                                >
+                                  {country.label}
+                                  {country.value === field.value && (
+                                    <span className="ml-auto">✓</span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </PopoverContent>
                   </Popover>
                   <FormMessage />
