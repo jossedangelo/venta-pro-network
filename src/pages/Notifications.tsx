@@ -1,5 +1,3 @@
-
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -45,15 +43,7 @@ const notifications = [
 const Notifications = () => {
   return (
     <div className="space-y-4">
-      <div className="flex items-center mb-4">
-        <Button asChild variant="outline" size="sm" className="mr-2">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a Inicio
-          </Link>
-        </Button>
-        <h1 className="text-2xl font-bold">Notificaciones</h1>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Notificaciones</h1>
       
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 lg:col-span-9">
