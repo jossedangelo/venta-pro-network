@@ -5,9 +5,9 @@ import SidebarMenu from "@/components/SidebarMenu";
 
 const MainLayout = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <NavBar />
-      <div className="container flex">
+      <div className="flex-1 flex">
         {/* Layout principal con sidebar fijo y contenido */}
         <div className="flex w-full">
           {/* Sidebar fijo en desktop */}
@@ -18,8 +18,10 @@ const MainLayout = () => {
           </aside>
           
           {/* Contenido principal */}
-          <main className="flex-1 py-4 px-4">
-            <Outlet />
+          <main className="flex-1 p-0 md:p-4 md:pt-6">
+            <div className="md:max-w-4xl mx-auto">
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>

@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +22,8 @@ const NavBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="container flex h-14 items-center px-2 md:px-4">
         {isMobile ? (
           <>
             <div className="flex items-center justify-between w-full">
@@ -30,20 +31,20 @@ const NavBar = () => {
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setSidebarOpen(true)}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-primary hover:text-primary/80"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Abrir menú</span>
               </Button>
               
-              <Link to="/" className="flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
-                <Briefcase className="h-6 w-6 text-primary" />
-                <span className="font-bold text-xl text-primary">VentaPro</span>
+              <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-1.5">
+                <Briefcase className="h-5 w-5 text-primary" />
+                <span className="font-bold text-lg text-primary">VentaPro</span>
               </Link>
               
               <div className="flex items-center space-x-1">
                 <Link to="/notificaciones">
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80">
                     <Bell className="h-5 w-5" />
                   </Button>
                 </Link>
