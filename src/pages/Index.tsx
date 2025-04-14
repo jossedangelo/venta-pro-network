@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +12,7 @@ const posts = [
     author: {
       name: "María García",
       role: "Directora de Ventas en TechCorp",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80"
     },
     content: "Acabo de cerrar el trimestre con un 135% de cumplimiento! Todo el esfuerzo valió la pena. Gracias a mi equipo por el increíble trabajo.",
     timestamp: "Hace 2 horas",
@@ -25,7 +24,7 @@ const posts = [
     author: {
       name: "Juan Martínez",
       role: "Account Executive en SaaS Solutions",
-      avatar: "/placeholder.svg"
+      avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=80"
     },
     content: "Compartiendo mi experiencia en el evento de ventas consultivas de ayer. Aprendí técnicas revolucionarias para entender las necesidades ocultas de los clientes.",
     timestamp: "Hace 5 horas",
@@ -41,19 +40,22 @@ const suggestedConnections = [
     name: "Ana Pérez",
     role: "Sales Manager",
     company: "InnovaTech",
-    mutualConnections: 12
+    mutualConnections: 12,
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=80"
   },
   {
     name: "Roberto Silva",
     role: "Account Executive",
     company: "GlobalSoft",
-    mutualConnections: 8
+    mutualConnections: 8,
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=85"
   },
   {
     name: "Elena Torres",
     role: "Business Development",
     company: "SalesForce",
-    mutualConnections: 15
+    mutualConnections: 15,
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=85"
   }
 ];
 

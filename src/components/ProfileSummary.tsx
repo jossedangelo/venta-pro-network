@@ -11,8 +11,8 @@ const ProfileSummary = () => {
       <div className="h-24 bg-gradient-to-r from-secondary to-[#1a294c] rounded-t-lg"></div>
       <CardHeader className="relative pb-2">
         <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
-          <AvatarImage src="/placeholder.svg" alt="@usuario" />
-          <AvatarFallback>US</AvatarFallback>
+          <AvatarImage src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" alt="@usuario" />
+          <AvatarFallback>CR</AvatarFallback>
         </Avatar>
         <div className="pt-16">
           <div className="flex justify-between items-start">

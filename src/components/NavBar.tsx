@@ -57,7 +57,7 @@ const NavBar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src="/placeholder.svg" alt="@usuario" />
+                        <AvatarImage src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" alt="@usuario" />
                         <AvatarFallback>US</AvatarFallback>
                       </Avatar>
                     </Button>
@@ -133,8 +133,8 @@ const NavBar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src="/placeholder.svg" alt="@usuario" />
-                        <AvatarFallback>US</AvatarFallback>
+                        <AvatarImage src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" alt="@usuario" />
+                        <AvatarFallback>CR</AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>

@@ -9,37 +9,43 @@ const connections = [
     name: "Luis Fernández",
     role: "Key Account Manager",
     company: "TechSolutions",
-    mutualConnections: 23
+    mutualConnections: 23,
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952"
   },
   {
     name: "Carmen Jiménez",
     role: "Sales Director",
     company: "Global Tech",
-    mutualConnections: 17
+    mutualConnections: 17,
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
   },
   {
     name: "Miguel Ángel López",
     role: "Business Development",
     company: "InnovaSales",
-    mutualConnections: 9
+    mutualConnections: 9,
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
   },
   {
     name: "Sofía Martín",
     role: "Account Executive",
     company: "SalesForce",
-    mutualConnections: 14
+    mutualConnections: 14,
+    avatar: "https://images.unsplash.com/photo-1518005020951-eccb494ad742"
   },
   {
     name: "Pablo Ruiz",
     role: "Regional Sales Manager",
     company: "Enterprise Solutions",
-    mutualConnections: 21
+    mutualConnections: 21,
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=80"
   },
   {
     name: "Laura Sánchez",
     role: "Sales Specialist",
     company: "Tech Innovations",
-    mutualConnections: 7
+    mutualConnections: 7,
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80"
   }
 ];
 
@@ -48,13 +54,15 @@ const pendingConnections = [
     name: "Javier Torres",
     role: "Sales Manager",
     company: "NextGen Sales",
-    mutualConnections: 5
+    mutualConnections: 5,
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=80"
   },
   {
     name: "Isabel Vega",
     role: "Account Manager",
     company: "Cloud Solutions",
-    mutualConnections: 11
+    mutualConnections: 11,
+    avatar: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80"
   }
 ];
 
@@ -63,25 +71,29 @@ const suggestions = [
     name: "Elena García",
     role: "Senior Sales Executive",
     company: "SaaS Solutions",
-    mutualConnections: 19
+    mutualConnections: 19,
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=90"
   },
   {
     name: "Roberto Díaz",
     role: "Business Development Manager",
     company: "Tech Innovations",
-    mutualConnections: 8
+    mutualConnections: 8,
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=90"
   },
   {
     name: "Ana Rodríguez",
     role: "Sales Director",
     company: "Global Sales",
-    mutualConnections: 24
+    mutualConnections: 24,
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=90"
   },
   {
     name: "Carlos Martínez",
     role: "Account Executive",
     company: "Enterprise Solutions",
-    mutualConnections: 13
+    mutualConnections: 13,
+    avatar: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=90"
   }
 ];
 
