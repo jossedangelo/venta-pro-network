@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainLayout from "./components/MainLayout";
 import Index from "./pages/Index";
 import Network from "./pages/Network";
 import Jobs from "./pages/Jobs";
@@ -26,18 +27,20 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/red" element={<Network />} />
-          <Route path="/empleos" element={<Jobs />} />
-          <Route path="/mensajes" element={<Messages />} />
-          <Route path="/notificaciones" element={<Notifications />} />
-          <Route path="/estadisticas" element={<Statistics />} />
-          <Route path="/resultados" element={<Results />} />
-          <Route path="/objetivos" element={<Goals />} />
-          <Route path="/selly" element={<Selly />} />
-          <Route path="/plan-accion" element={<ActionPlan />} />
-          <Route path="/perfil" element={<Profile />} />
-          <Route path="*" element={<NotFound />} />
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/red" element={<Network />} />
+            <Route path="/empleos" element={<Jobs />} />
+            <Route path="/mensajes" element={<Messages />} />
+            <Route path="/notificaciones" element={<Notifications />} />
+            <Route path="/estadisticas" element={<Statistics />} />
+            <Route path="/resultados" element={<Results />} />
+            <Route path="/objetivos" element={<Goals />} />
+            <Route path="/selly" element={<Selly />} />
+            <Route path="/plan-accion" element={<ActionPlan />} />
+            <Route path="/perfil" element={<Profile />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

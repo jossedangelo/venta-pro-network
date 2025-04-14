@@ -3,8 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NavBar from "@/components/NavBar";
-import SidebarMenu from "@/components/SidebarMenu";
 import PostCard from "@/components/PostCard";
 import ProfileSummary from "@/components/ProfileSummary";
 import ConnectionCard from "@/components/ConnectionCard";
@@ -61,77 +59,67 @@ const suggestedConnections = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <NavBar />
-      <div className="container grid grid-cols-12 gap-6 py-4">
-        {/* Sidebar izquierdo */}
-        <aside className="hidden md:block md:col-span-3 lg:col-span-2">
-          <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
-            <SidebarMenu />
-          </div>
-        </aside>
+    <div className="grid grid-cols-12 gap-6">
+      {/* Contenido principal */}
+      <div className="col-span-12 lg:col-span-8">
+        {/* Compartir actualización */}
+        <Card className="mb-4">
+          <CardContent className="p-4">
+            <div className="flex gap-4 items-center mb-4">
+              <Input placeholder="Comparte una actualización o noticia..." className="flex-grow" />
+              <Button>Publicar</Button>
+            </div>
+            <div className="flex justify-between">
+              <Button variant="ghost" size="sm" className="flex items-center">
+                <Image className="mr-2 h-4 w-4" />
+                Foto
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center">
+                <BarChart className="mr-2 h-4 w-4" />
+                Estadística
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center">
+                <Award className="mr-2 h-4 w-4" />
+                Logro
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center">
+                <Share2 className="mr-2 h-4 w-4" />
+                Compartir
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
         
-        {/* Contenido principal */}
-        <main className="col-span-12 md:col-span-6 lg:col-span-7">
-          {/* Compartir actualización - Movido al principio */}
-          <Card className="mb-4">
+        <Tabs defaultValue="destacado" className="mb-4">
+          <TabsList>
+            <TabsTrigger value="destacado">Destacado</TabsTrigger>
+            <TabsTrigger value="reciente">Reciente</TabsTrigger>
+            <TabsTrigger value="siguiendo">Siguiendo</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        {posts.map((post, index) => (
+          <PostCard key={index} {...post} />
+        ))}
+      </div>
+      
+      {/* Sidebar derecho */}
+      <aside className="hidden lg:block lg:col-span-4">
+        <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
+          <ProfileSummary />
+          
+          <Card className="mb-4 mt-4">
             <CardContent className="p-4">
-              <div className="flex gap-4 items-center mb-4">
-                <Input placeholder="Comparte una actualización o noticia..." className="flex-grow" />
-                <Button>Publicar</Button>
-              </div>
-              <div className="flex justify-between">
-                <Button variant="ghost" size="sm" className="flex items-center">
-                  <Image className="mr-2 h-4 w-4" />
-                  Foto
-                </Button>
-                <Button variant="ghost" size="sm" className="flex items-center">
-                  <BarChart className="mr-2 h-4 w-4" />
-                  Estadística
-                </Button>
-                <Button variant="ghost" size="sm" className="flex items-center">
-                  <Award className="mr-2 h-4 w-4" />
-                  Logro
-                </Button>
-                <Button variant="ghost" size="sm" className="flex items-center">
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Compartir
-                </Button>
+              <h3 className="font-medium mb-3">Conexiones recomendadas</h3>
+              <div className="grid gap-4">
+                {suggestedConnections.map((person, index) => (
+                  <ConnectionCard key={index} person={person} />
+                ))}
               </div>
             </CardContent>
           </Card>
-          
-          <Tabs defaultValue="destacado" className="mb-4">
-            <TabsList>
-              <TabsTrigger value="destacado">Destacado</TabsTrigger>
-              <TabsTrigger value="reciente">Reciente</TabsTrigger>
-              <TabsTrigger value="siguiendo">Siguiendo</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          
-          {posts.map((post, index) => (
-            <PostCard key={index} {...post} />
-          ))}
-        </main>
-        
-        {/* Sidebar derecho - Ahora contiene ProfileSummary */}
-        <aside className="hidden lg:block lg:col-span-3">
-          <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
-            <ProfileSummary />
-            
-            <Card className="mb-4 mt-4">
-              <CardContent className="p-4">
-                <h3 className="font-medium mb-3">Conexiones recomendadas</h3>
-                <div className="grid gap-4">
-                  {suggestedConnections.map((person, index) => (
-                    <ConnectionCard key={index} person={person} />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </aside>
-      </div>
+        </div>
+      </aside>
     </div>
   );
 };
