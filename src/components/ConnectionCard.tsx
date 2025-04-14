@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,7 +16,7 @@ interface ConnectionCardProps {
 
 const ConnectionCard = ({ person }: ConnectionCardProps) => {
   return (
-    <Card className="h-full">
+    <Card className="h-full shadow-light hover:shadow-medium transition-shadow duration-300">
       <CardHeader className="flex flex-col items-center pb-2">
         <Avatar className="h-16 w-16">
           <AvatarImage src={person.avatar || "/placeholder.svg"} alt={person.name} />

@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -29,7 +28,7 @@ const PostCard = ({
   imageUrl
 }: PostCardProps) => {
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300">
       <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
         <Avatar>
           <AvatarImage src={author.avatar || "/placeholder.svg"} alt={author.name} />

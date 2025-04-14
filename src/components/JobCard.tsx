@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +17,7 @@ interface JobCardProps {
 
 const JobCard = ({ job }: JobCardProps) => {
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300">
       <CardHeader className="flex flex-row items-start gap-4 space-y-0">
         <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary/10">
           <Briefcase className="h-6 w-6 text-primary" />
