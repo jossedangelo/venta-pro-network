@@ -43,7 +43,7 @@ const NavBar = () => {
               
               <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-1.5">
                 <Briefcase className="h-5 w-5 text-secondary" />
-                <span className="font-bold text-lg text-black">Backxy</span>
+                <span className="font-bold text-lg" style={{color: '#1a294c'}}>Backxy</span>
               </Link>
               
               <div className="flex items-center space-x-1">
@@ -91,7 +91,7 @@ const NavBar = () => {
             <div className="mr-4 flex">
               <Link to="/" className="flex items-center space-x-2">
                 <Briefcase className="h-6 w-6 text-secondary" />
-                <span className="font-bold text-xl text-black">Backxy</span>
+                <span className="font-bold text-xl" style={{color: '#1a294c'}}>Backxy</span>
               </Link>
             </div>
             
