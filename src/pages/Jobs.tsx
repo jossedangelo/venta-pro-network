@@ -1,12 +1,12 @@
 
-import NavBar from "@/components/NavBar";
-import SidebarMenu from "@/components/SidebarMenu";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import JobCard from "@/components/JobCard";
-import { Search } from "lucide-react";
+import { Search, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const recentJobs = [
   {
@@ -64,18 +64,20 @@ const savedJobs = [
 
 const Jobs = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <NavBar />
-      <div className="container grid grid-cols-12 gap-6 py-4">
-        {/* Sidebar */}
-        <aside className="hidden md:block md:col-span-3 lg:col-span-2">
-          <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
-            <SidebarMenu />
-          </div>
-        </aside>
-        
+    <div className="space-y-4">
+      <div className="flex items-center mb-4">
+        <Button asChild variant="outline" size="sm" className="mr-2">
+          <Link to="/">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Inicio
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold">Oportunidades de Empleo</h1>
+      </div>
+      
+      <div className="grid grid-cols-12 gap-6">
         {/* Main content */}
-        <main className="col-span-12 md:col-span-9 lg:col-span-7">
+        <main className="col-span-12 lg:col-span-9">
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>Oportunidades de Empleo</CardTitle>
