@@ -18,7 +18,7 @@ const MainLayout = () => {
           </aside>
           
           {/* Contenido principal */}
-          <main className="flex-1 p-0 md:p-4 md:pt-6">
+          <main className="flex-1 p-0 md:p-4 md:pt-6 overflow-x-hidden">
             <div className="md:max-w-4xl mx-auto">
               <Outlet />
             </div>

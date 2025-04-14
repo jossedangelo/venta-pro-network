@@ -53,23 +53,23 @@ const Results = () => {
   };
 
   return (
-    <div className="px-4 pb-8 md:pb-16 md:px-0">
-      <h1 className="text-2xl md:text-3xl font-bold my-6 md:mb-8">Mis Resultados</h1>
+    <div className="px-4 pb-8 md:px-0">
+      <h1 className="text-2xl md:text-3xl font-bold my-5">Mis Resultados</h1>
       
-      <div className="mb-6">
+      <div className="mb-5">
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
-                "w-full md:w-[280px] justify-start text-left font-normal rounded-xl border-input shadow-sm",
+                "w-full justify-start text-left font-normal rounded-full h-12",
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="mr-2 h-5 w-5" />
               {format(date, "dd 'de' MMMM 'de' yyyy", { locale: es })}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 rounded-xl border border-input shadow-md">
+          <PopoverContent className="w-auto p-0 rounded-xl border shadow-lg">
             <Calendar
               mode="single"
               selected={date}
@@ -81,74 +81,72 @@ const Results = () => {
         </Popover>
       </div>
 
-      <Card className="rounded-2xl shadow-sm border-input overflow-hidden">
+      <Card className="rounded-xl shadow-sm border-0 md:border overflow-hidden">
         <CardHeader className="pb-3">
           <CardTitle className="text-xl md:text-2xl">Resultados del día</CardTitle>
           <CardDescription>
             Introduce los resultados obtenidos el {format(date, "dd 'de' MMMM 'de' yyyy", { locale: es })}
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-6">
-          <div className="grid grid-cols-1 gap-4">
-            <div className="space-y-3">
-              <Label htmlFor="calls" className="text-base font-medium">Llamadas realizadas</Label>
-              <Input 
-                id="calls" 
-                type="number" 
-                value={metrics.calls || ""}
-                onChange={(e) => handleMetricChange("calls", e.target.value)}
-                className="rounded-xl h-12 text-base"
-              />
-            </div>
-            
-            <div className="space-y-3">
-              <Label htmlFor="meetings" className="text-base font-medium">Reuniones</Label>
-              <Input 
-                id="meetings" 
-                type="number" 
-                value={metrics.meetings || ""}
-                onChange={(e) => handleMetricChange("meetings", e.target.value)}
-                className="rounded-xl h-12 text-base"
-              />
-            </div>
-            
-            <div className="space-y-3">
-              <Label htmlFor="proposals" className="text-base font-medium">Propuestas enviadas</Label>
-              <Input 
-                id="proposals" 
-                type="number" 
-                value={metrics.proposals || ""}
-                onChange={(e) => handleMetricChange("proposals", e.target.value)}
-                className="rounded-xl h-12 text-base"
-              />
-            </div>
-            
-            <div className="space-y-3">
-              <Label htmlFor="sales" className="text-base font-medium">Ventas cerradas</Label>
-              <Input 
-                id="sales" 
-                type="number" 
-                value={metrics.sales || ""}
-                onChange={(e) => handleMetricChange("sales", e.target.value)}
-                className="rounded-xl h-12 text-base"
-              />
-            </div>
-            
-            <div className="space-y-3">
-              <Label htmlFor="revenue" className="text-base font-medium">Facturación (€)</Label>
-              <Input 
-                id="revenue" 
-                type="number" 
-                value={metrics.revenue || ""}
-                onChange={(e) => handleMetricChange("revenue", e.target.value)}
-                className="rounded-xl h-12 text-base"
-              />
-            </div>
+        <CardContent className="space-y-5 px-4 md:px-6">
+          <div className="space-y-3">
+            <Label htmlFor="calls" className="text-base font-medium">Llamadas realizadas</Label>
+            <Input 
+              id="calls" 
+              type="number" 
+              value={metrics.calls || ""}
+              onChange={(e) => handleMetricChange("calls", e.target.value)}
+              className="rounded-xl h-12 text-base"
+            />
+          </div>
+          
+          <div className="space-y-3">
+            <Label htmlFor="meetings" className="text-base font-medium">Reuniones</Label>
+            <Input 
+              id="meetings" 
+              type="number" 
+              value={metrics.meetings || ""}
+              onChange={(e) => handleMetricChange("meetings", e.target.value)}
+              className="rounded-xl h-12 text-base"
+            />
+          </div>
+          
+          <div className="space-y-3">
+            <Label htmlFor="proposals" className="text-base font-medium">Propuestas enviadas</Label>
+            <Input 
+              id="proposals" 
+              type="number" 
+              value={metrics.proposals || ""}
+              onChange={(e) => handleMetricChange("proposals", e.target.value)}
+              className="rounded-xl h-12 text-base"
+            />
+          </div>
+          
+          <div className="space-y-3">
+            <Label htmlFor="sales" className="text-base font-medium">Ventas cerradas</Label>
+            <Input 
+              id="sales" 
+              type="number" 
+              value={metrics.sales || ""}
+              onChange={(e) => handleMetricChange("sales", e.target.value)}
+              className="rounded-xl h-12 text-base"
+            />
+          </div>
+          
+          <div className="space-y-3">
+            <Label htmlFor="revenue" className="text-base font-medium">Facturación (€)</Label>
+            <Input 
+              id="revenue" 
+              type="number" 
+              value={metrics.revenue || ""}
+              onChange={(e) => handleMetricChange("revenue", e.target.value)}
+              className="rounded-xl h-12 text-base"
+            />
           </div>
         </CardContent>
-        <CardFooter className="pt-0 pb-6 px-6">
-          <Button onClick={handleSave} className="ml-auto w-full rounded-xl h-12 shadow-sm">
-            <Save className="mr-2 h-4 w-4" />
+        <CardFooter className="pt-0 pb-6 px-4 md:px-6">
+          <Button onClick={handleSave} className="w-full rounded-full h-12 shadow-sm">
+            <Save className="mr-2 h-5 w-5" />
             Guardar resultados
           </Button>
         </CardFooter>
