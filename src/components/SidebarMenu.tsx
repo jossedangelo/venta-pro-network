@@ -14,7 +14,8 @@ import {
   Target,
   BarChart,
   Bot,
-  CheckSquare
+  CheckSquare,
+  Calendar
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Sheet } from "@/components/ui/sheet";
@@ -87,6 +88,14 @@ export function SidebarMenu({ className, closeSidebar }: SidebarProps) {
             >
               <Bell className="mr-2 h-4 w-4" />
               Notificaciones
+            </Button>
+            <Button 
+              variant={isActive("/eventos") ? "default" : "ghost"} 
+              className="w-full justify-start"
+              onClick={() => handleMenuClick("/eventos")}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Eventos
             </Button>
           </div>
         </div>
@@ -168,6 +177,6 @@ export function SidebarMenu({ className, closeSidebar }: SidebarProps) {
       </div>
     </div>
   );
-}
+};
 
 export default SidebarMenu;
