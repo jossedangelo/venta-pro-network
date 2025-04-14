@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +7,8 @@ import PostCard from "@/components/PostCard";
 import ProfileSummary from "@/components/ProfileSummary";
 import ConnectionCard from "@/components/ConnectionCard";
 import { Share2, Image, BarChart, Award } from "lucide-react";
+import { useState } from "react";
+import CreatePostDialog from "@/components/CreatePostDialog";
 
 const posts = [
   {
@@ -60,6 +63,12 @@ const suggestedConnections = [
 ];
 
 const Index = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* Contenido principal */}
@@ -68,23 +77,28 @@ const Index = () => {
         <Card className="mb-4">
           <CardContent className="p-4">
             <div className="flex gap-4 items-center mb-4">
-              <Input placeholder="Comparte una actualización o noticia..." className="flex-grow" />
-              <Button>Publicar</Button>
+              <Input 
+                placeholder="Comparte una actualización o noticia..." 
+                className="flex-grow cursor-pointer" 
+                onClick={handleOpenDialog}
+                readOnly
+              />
+              <Button onClick={handleOpenDialog}>Publicar</Button>
             </div>
             <div className="flex justify-between">
-              <Button variant="ghost" size="sm" className="flex items-center">
+              <Button variant="ghost" size="sm" className="flex items-center" onClick={handleOpenDialog}>
                 <Image className="mr-2 h-4 w-4" />
                 Foto
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center">
+              <Button variant="ghost" size="sm" className="flex items-center" onClick={handleOpenDialog}>
                 <BarChart className="mr-2 h-4 w-4" />
                 Estadística
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center">
+              <Button variant="ghost" size="sm" className="flex items-center" onClick={handleOpenDialog}>
                 <Award className="mr-2 h-4 w-4" />
                 Logro
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center">
+              <Button variant="ghost" size="sm" className="flex items-center" onClick={handleOpenDialog}>
                 <Share2 className="mr-2 h-4 w-4" />
                 Compartir
               </Button>
@@ -122,6 +136,9 @@ const Index = () => {
           </Card>
         </div>
       </aside>
+
+      {/* Post Creation Dialog */}
+      <CreatePostDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 };
