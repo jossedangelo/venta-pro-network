@@ -72,7 +72,9 @@ const Index = () => {
         </aside>
         
         {/* Main content */}
-        <main className="col-span-12 md:col-span-9 lg:col-span-7">
+        <main className="col-span-12 md:col-span-6 lg:col-span-7">
+          <ProfileSummary />
+          
           <Card className="mb-4">
             <CardContent className="p-4">
               <div className="flex gap-4 items-center mb-4">
@@ -115,10 +117,8 @@ const Index = () => {
         
         {/* Right sidebar */}
         <aside className="hidden lg:block lg:col-span-3">
-          <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] space-y-4">
-            <ProfileSummary />
-            
-            <Card>
+          <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
+            <Card className="mb-4">
               <CardContent className="p-4">
                 <h3 className="font-medium mb-3">Conexiones recomendadas</h3>
                 <div className="grid gap-4">
