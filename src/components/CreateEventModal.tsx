@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Calendar, Clock, ImageIcon, X, MapPin, Globe, Search } from "lucide-react";
+import { Calendar, Clock, ImageIcon, X, MapPin, Globe, Search, Flag } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +8,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -109,7 +107,6 @@ interface CreateEventModalProps {
 const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) => {
   const [open, setOpen] = useState(false);
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
-  const [openCountrySelect, setOpenCountrySelect] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
   const form = useForm<EventFormValues>({
@@ -128,7 +125,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validar tipo de archivo
       if (!file.type.startsWith("image/")) {
         toast({
           title: "Formato no válido",
@@ -138,7 +134,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
         return;
       }
 
-      // Validar tamaño (5MB máximo)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "Archivo demasiado grande",
@@ -154,7 +149,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
     }
   };
 
-  // Filter countries based on search value
   const filteredCountries = searchValue 
     ? countries.filter(country => 
         country.label.toLowerCase().includes(searchValue.toLowerCase())
@@ -162,7 +156,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
     : countries;
 
   const onSubmit = (values: EventFormValues) => {
-    // Aquí se manejaría la creación real del evento, enviando datos al servidor
     console.log("Nuevo evento:", values);
     toast({
       title: "Evento creado",
@@ -184,7 +177,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Imagen de portada */}
             <div>
               <div 
                 className="aspect-video bg-gray-100 rounded-md flex flex-col items-center justify-center cursor-pointer relative"
@@ -225,7 +217,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               </div>
             </div>
 
-            {/* Título */}
             <FormField
               control={form.control}
               name="title"
@@ -243,7 +234,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               )}
             />
 
-            {/* Organizador */}
             <FormField
               control={form.control}
               name="organizer"
@@ -258,7 +248,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               )}
             />
 
-            {/* Tipo de evento */}
             <FormField
               control={form.control}
               name="eventType"
@@ -292,7 +281,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               )}
             />
 
-            {/* Fecha y hora de inicio */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -353,7 +341,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               />
             </div>
 
-            {/* Fecha y hora de finalización */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -416,76 +403,59 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               />
             </div>
 
-            {/* País */}
             <FormField
               control={form.control}
               name="country"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>País</FormLabel>
-                  <Popover open={openCountrySelect} onOpenChange={setOpenCountrySelect}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={openCountrySelect}
-                          className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? countries.find((country) => country.value === field.value)?.label
-                            : "Seleccionar país"}
-                          <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <div className="w-full">
-                        <div className="flex items-center border-b px-3">
-                          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                          <input 
-                            className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                            placeholder="Buscar país..." 
-                            value={searchValue}
-                            onChange={(e) => setSearchValue(e.target.value)}
-                          />
-                        </div>
-                        <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
-                          {filteredCountries.length === 0 ? (
-                            <div className="py-6 text-center text-sm">No se encontraron países</div>
-                          ) : (
-                            <div className="overflow-hidden p-1 text-foreground">
-                              {filteredCountries.map((country) => (
-                                <div
-                                  key={country.value}
-                                  className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground"
-                                  onClick={() => {
-                                    form.setValue("country", country.value);
-                                    setOpenCountrySelect(false);
-                                    setSearchValue("");
-                                  }}
-                                >
-                                  {country.label}
-                                  {country.value === field.value && (
-                                    <span className="ml-auto">✓</span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar país">
+                        <div className="flex items-center">
+                          {field.value && (
+                            <span className="mr-2">
+                              {countries.find(country => country.value === field.value)?.label}
+                            </span>
                           )}
                         </div>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <div className="flex items-center border-b px-3 py-2">
+                        <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                        <input 
+                          className="flex h-8 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                          placeholder="Buscar país..." 
+                          value={searchValue}
+                          onChange={(e) => setSearchValue(e.target.value)}
+                        />
                       </div>
-                    </PopoverContent>
-                  </Popover>
+                      <div className="max-h-[300px] overflow-y-auto">
+                        {filteredCountries.length === 0 ? (
+                          <div className="py-6 text-center text-sm">No se encontraron países</div>
+                        ) : (
+                          filteredCountries.map((country) => (
+                            <SelectItem 
+                              key={country.value} 
+                              value={country.value}
+                              className="cursor-pointer"
+                            >
+                              {country.label}
+                            </SelectItem>
+                          ))
+                        )}
+                      </div>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Descripción */}
             <FormField
               control={form.control}
               name="description"
@@ -504,7 +474,6 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
               )}
             />
 
-            {/* Campos específicos según el tipo de evento */}
             {form.watch("eventType") === "presencial" ? (
               <FormField
                 control={form.control}
