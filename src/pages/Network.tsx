@@ -1,11 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ConnectionCard from "@/components/ConnectionCard";
-import { Search, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
 const connections = [
   {
@@ -90,14 +87,8 @@ const suggestions = [
 
 const Network = () => {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center mb-4">
-        <Button asChild variant="outline" size="sm" className="mr-2">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a Inicio
-          </Link>
-        </Button>
+    <div className="space-y-4 px-4 md:px-0">
+      <div className="mb-4">
         <h1 className="text-2xl font-bold">Mi Red</h1>
       </div>
       

@@ -1,5 +1,5 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Users, Target, Award } from "lucide-react";
 
 interface MetricProps {
@@ -13,20 +13,18 @@ interface MetricProps {
 
 const MetricCard = ({ title, value, description, icon, trend, percentage }: MetricProps) => {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
+    <Card className="overflow-hidden border shadow-sm">
+      <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+        <div className="mb-2 flex items-center justify-center">{icon}</div>
+        <h3 className="text-sm font-medium mb-1">{title}</h3>
         <div className="text-2xl font-bold">{value}</div>
-        <CardDescription className="flex items-center space-x-1">
+        <div className="flex items-center justify-center space-x-1 text-xs mt-1">
           {trend === "up" && (
-            <TrendingUp className="h-4 w-4 text-emerald-500" />
+            <TrendingUp className="h-3 w-3 text-emerald-500" />
           )}
           {percentage && <span className={trend === "up" ? "text-emerald-500" : "text-red-500"}>{percentage}</span>}
-          <span>{description}</span>
-        </CardDescription>
+          <span className="text-muted-foreground">{description}</span>
+        </div>
       </CardContent>
     </Card>
   );
@@ -39,7 +37,7 @@ const Metrics = () => {
         title="Conversiones"
         value="68%"
         description="vs. 64% el mes pasado"
-        icon={<Target className="h-4 w-4 text-muted-foreground" />}
+        icon={<Target className="h-4 w-4 text-primary" />}
         trend="up"
         percentage="+4%"
       />
@@ -47,7 +45,7 @@ const Metrics = () => {
         title="Visitas a tu perfil"
         value="289"
         description="últimos 7 días"
-        icon={<Users className="h-4 w-4 text-muted-foreground" />}
+        icon={<Users className="h-4 w-4 text-primary" />}
         trend="up"
         percentage="+12%"
       />
@@ -55,7 +53,7 @@ const Metrics = () => {
         title="Logros de ventas"
         value="4"
         description="este trimestre"
-        icon={<Award className="h-4 w-4 text-muted-foreground" />}
+        icon={<Award className="h-4 w-4 text-primary" />}
         trend="up"
         percentage="+1"
       />
@@ -63,7 +61,7 @@ const Metrics = () => {
         title="Venta media"
         value="$8,942"
         description="vs. $7,651 anterior"
-        icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+        icon={<TrendingUp className="h-4 w-4 text-primary" />}
         trend="up"
         percentage="+16.8%"
       />

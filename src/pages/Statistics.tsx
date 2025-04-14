@@ -1,8 +1,5 @@
 
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   LineChart,
@@ -62,14 +59,8 @@ const kpis = [
 
 const Statistics = () => {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center mb-4">
-        <Button asChild variant="outline" size="sm" className="mr-2">
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a Inicio
-          </Link>
-        </Button>
+    <div className="space-y-4 px-4 md:px-0">
+      <div className="mb-4">
         <h1 className="text-2xl font-bold">Estadísticas de Ventas</h1>
       </div>
       
@@ -77,18 +68,16 @@ const Statistics = () => {
         Visualiza tus métricas y rendimiento de ventas
       </p>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {kpis.map((kpi, index) => (
-          <Card key={index}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpi.value}</div>
+          <Card key={index} className="overflow-hidden border shadow-sm">
+            <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+              <h3 className="text-sm font-medium mb-2">{kpi.title}</h3>
+              <div className="text-2xl font-bold mb-1">{kpi.value}</div>
               {kpi.comparison && (
                 <p className="text-xs text-muted-foreground">{kpi.comparison}</p>
               )}
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs mt-1">
                 <span className={`text-${kpi.changeType === "increase" ? "emerald" : "rose"}-500 font-medium`}>
                   {kpi.change}
                 </span>{" "}
@@ -108,13 +97,11 @@ const Statistics = () => {
         
         <TabsContent value="ventas" className="space-y-4">
           <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Rendimiento de Ventas</CardTitle>
-              <p className="text-sm text-muted-foreground">
+            <CardContent className="p-6">
+              <h2 className="font-semibold mb-2">Rendimiento de Ventas</h2>
+              <p className="text-sm text-muted-foreground mb-4">
                 Comparativa de ventas mensuales vs. objetivos
               </p>
-            </CardHeader>
-            <CardContent>
               <ResponsiveContainer width="100%" height={400}>
                 <LineChart
                   data={data}
@@ -145,13 +132,11 @@ const Statistics = () => {
         
         <TabsContent value="actividad">
           <Card>
-            <CardHeader>
-              <CardTitle>Actividad Comercial</CardTitle>
-              <p className="text-sm text-muted-foreground">
+            <CardContent className="p-6">
+              <h2 className="font-semibold mb-2">Actividad Comercial</h2>
+              <p className="text-sm text-muted-foreground mb-4">
                 Resumen de tu actividad comercial
               </p>
-            </CardHeader>
-            <CardContent>
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart
                   data={data}
@@ -176,13 +161,11 @@ const Statistics = () => {
         
         <TabsContent value="leads">
           <Card>
-            <CardHeader>
-              <CardTitle>Nuevos Leads</CardTitle>
-              <p className="text-sm text-muted-foreground">
+            <CardContent className="p-6">
+              <h2 className="font-semibold mb-2">Nuevos Leads</h2>
+              <p className="text-sm text-muted-foreground mb-4">
                 Análisis de adquisición de leads
               </p>
-            </CardHeader>
-            <CardContent>
               <p>Contenido de análisis de leads en desarrollo.</p>
             </CardContent>
           </Card>
