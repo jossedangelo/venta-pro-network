@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Image, Calendar, Smile, Link, X, Clock } from "lucide-react";
+import { Image, Calendar, Smile, Link as LinkIcon, X, Clock, Youtube } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
@@ -156,30 +156,55 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
               <X className="h-4 w-4" />
             </Button>
             
-            {linkPreview.image && (
-              <div className="relative aspect-video w-full bg-muted">
-                <img 
-                  src={linkPreview.image} 
-                  alt={linkPreview.title || "Link preview"} 
-                  className="w-full h-full object-cover"
-                />
-                {linkPreview.isVideo && (
+            {linkPreview.isVideo && linkPreview.image ? (
+              <div>
+                <div className="relative aspect-video w-full bg-muted">
+                  <img 
+                    src={linkPreview.image} 
+                    alt={linkPreview.title || "Link preview"} 
+                    className="w-full h-full object-cover"
+                  />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 5V19L19 12L8 5Z" fill="white"/>
-                      </svg>
+                      <Play className="h-8 w-8 text-white" fill="white" />
                     </div>
                   </div>
-                )}
+                </div>
+                
+                <div className="p-4">
+                  <div className="flex items-start">
+                    <Youtube className="h-5 w-5 mr-3 text-red-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-base">{linkPreview.title}</h3>
+                      <p className="text-muted-foreground text-sm">{linkPreview.description}</p>
+                      <p className="text-blue-600 text-sm mt-1">{linkPreview.url}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : linkPreview.image ? (
+              <div>
+                <div className="relative aspect-video w-full bg-muted">
+                  <img 
+                    src={linkPreview.image} 
+                    alt={linkPreview.title || "Link preview"} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
+                <div className="p-4">
+                  <h3 className="font-medium line-clamp-2">{linkPreview.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{linkPreview.description}</p>
+                  <p className="text-xs text-muted-foreground truncate mt-2">{linkPreview.url}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4">
+                <h3 className="font-medium line-clamp-2">{linkPreview.title}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{linkPreview.description}</p>
+                <p className="text-xs text-muted-foreground truncate mt-2">{linkPreview.url}</p>
               </div>
             )}
-            
-            <div className="p-4">
-              <h3 className="font-medium line-clamp-2">{linkPreview.title}</h3>
-              <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{linkPreview.description}</p>
-              <p className="text-xs text-muted-foreground truncate mt-2">{linkPreview.url}</p>
-            </div>
           </Card>
         )}
 
@@ -195,7 +220,7 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
               <Smile className="h-5 w-5" />
             </Button>
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <Link className="h-5 w-5" />
+              <LinkIcon className="h-5 w-5" />
             </Button>
           </div>
 

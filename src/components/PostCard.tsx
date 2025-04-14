@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2 } from "lucide-react";
+import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { 
@@ -39,7 +39,7 @@ const PostCard = ({
   imageUrl,
   isVideo = false,
   onDelete,
-  isCurrentUser = true // Para fines de demostración, predeterminado a verdadero
+  isCurrentUser = true
 }: PostCardProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -131,11 +131,16 @@ const PostCard = ({
         )}
       </CardHeader>
       <CardContent className="pt-2">
-        <p className="mb-4">{content}</p>
+        {content && <p className="mb-4">{content}</p>}
+        
+        {hasImage && imageUrl && isYouTubeUrl(imageUrl) && (
+          <p className="mb-4 text-blue-600 break-words">{imageUrl}</p>
+        )}
+        
         {hasImage && imageUrl && (
           <div className="rounded-md overflow-hidden mb-2" ref={containerRef}>
             {isVideo && isYouTubeUrl(imageUrl) ? (
-              <div className="w-full relative bg-black rounded-md">
+              <Card className="border overflow-hidden">
                 {!isPlaying ? (
                   <div>
                     <AspectRatio ratio={16/9}>
@@ -145,23 +150,26 @@ const PostCard = ({
                           alt="Miniatura de video de YouTube"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-black/40 flex flex-col justify-start p-4">
-                          <h3 className="text-white text-4xl font-bold mb-2">Video de YouTube</h3>
-                          <p className="text-white text-xl opacity-90">Haz clic para reproducir este video</p>
-                        </div>
                         <button 
-                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer"
+                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-black/20"
                           onClick={() => setIsPlaying(true)}
                         >
-                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/90 transition-colors">
-                            <Play className="h-8 w-8 text-white" />
+                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center">
+                            <Play className="h-8 w-8 text-white" fill="white" />
                           </div>
                         </button>
                       </div>
                     </AspectRatio>
-                    <p className="py-2 px-3 text-sm text-blue-600 bg-slate-100 overflow-hidden whitespace-nowrap text-ellipsis border-t">
-                      {imageUrl}
-                    </p>
+                    <div className="p-4 bg-white">
+                      <div className="flex items-start">
+                        <Youtube className="h-5 w-5 mr-3 text-red-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <h3 className="font-semibold text-base">Video de YouTube</h3>
+                          <p className="text-muted-foreground text-sm">Haz clic para reproducir este video</p>
+                          <p className="text-blue-600 text-sm mt-1">{imageUrl}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div>
@@ -174,12 +182,9 @@ const PostCard = ({
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       ></iframe>
                     </AspectRatio>
-                    <p className="py-2 px-3 text-sm text-blue-600 bg-slate-100 overflow-hidden whitespace-nowrap text-ellipsis border-t">
-                      {imageUrl}
-                    </p>
                   </div>
                 )}
-              </div>
+              </Card>
             ) : isVideo ? (
               <div className="w-full relative bg-black rounded-md">
                 <AspectRatio ratio={16/9}>
