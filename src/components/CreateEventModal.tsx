@@ -109,6 +109,7 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
   const [open, setOpen] = useState(false);
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
   const [openCountrySelect, setOpenCountrySelect] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -151,6 +152,13 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
       form.setValue("coverImage", file);
     }
   };
+
+  // Filter countries based on search value
+  const filteredCountries = searchValue 
+    ? countries.filter(country => 
+        country.label.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    : countries;
 
   const onSubmit = (values: EventFormValues) => {
     // Aquí se manejaría la creación real del evento, enviando datos al servidor
@@ -435,19 +443,22 @@ const CreateEventModal = ({ onEventCreated, trigger }: CreateEventModalProps) =>
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
                       <Command>
-                        <CommandInput
-                          placeholder="Buscar país..."
+                        <CommandInput 
+                          placeholder="Buscar país..." 
+                          value={searchValue}
+                          onValueChange={setSearchValue}
                           className="h-9"
                         />
                         <CommandEmpty>No se encontraron países</CommandEmpty>
-                        <CommandGroup className="max-h-64 overflow-auto">
-                          {countries.map((country) => (
+                        <CommandGroup>
+                          {filteredCountries.map((country) => (
                             <CommandItem
                               key={country.value}
                               value={country.label}
                               onSelect={() => {
                                 form.setValue("country", country.value);
                                 setOpenCountrySelect(false);
+                                setSearchValue("");
                               }}
                             >
                               {country.label}

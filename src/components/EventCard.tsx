@@ -27,6 +27,77 @@ const EventCard = ({ event, variant = "vertical" }: EventCardProps) => {
   };
   
   const isVertical = variant === "vertical";
+  
+  // Find country name based on country code
+  const getCountryName = (countryCode?: string) => {
+    if (!countryCode) return null;
+    
+    const countryNames: { [key: string]: string } = {
+      "es": "España",
+      "ad": "Andorra",
+      "ar": "Argentina",
+      "au": "Australia",
+      "at": "Austria",
+      "be": "Bélgica",
+      "br": "Brasil",
+      "ca": "Canadá",
+      "cl": "Chile",
+      "cn": "China",
+      "co": "Colombia",
+      "cr": "Costa Rica",
+      "hr": "Croacia",
+      "cu": "Cuba",
+      "cz": "República Checa",
+      "dk": "Dinamarca",
+      "do": "República Dominicana",
+      "ec": "Ecuador",
+      "eg": "Egipto",
+      "fi": "Finlandia",
+      "fr": "Francia",
+      "de": "Alemania",
+      "gr": "Grecia",
+      "hk": "Hong Kong",
+      "hu": "Hungría",
+      "is": "Islandia",
+      "in": "India",
+      "id": "Indonesia",
+      "ie": "Irlanda",
+      "il": "Israel",
+      "it": "Italia",
+      "jp": "Japón",
+      "kr": "Corea del Sur",
+      "lu": "Luxemburgo",
+      "my": "Malasia",
+      "mx": "México",
+      "ma": "Marruecos",
+      "nl": "Países Bajos",
+      "nz": "Nueva Zelanda",
+      "no": "Noruega",
+      "pa": "Panamá",
+      "pe": "Perú",
+      "ph": "Filipinas",
+      "pl": "Polonia",
+      "pt": "Portugal",
+      "ro": "Rumanía",
+      "ru": "Rusia",
+      "sa": "Arabia Saudita",
+      "sg": "Singapur",
+      "za": "Sudáfrica",
+      "se": "Suecia",
+      "ch": "Suiza",
+      "tw": "Taiwán",
+      "th": "Tailandia",
+      "tr": "Turquía",
+      "ae": "Emiratos Árabes Unidos",
+      "gb": "Reino Unido",
+      "us": "Estados Unidos",
+      "uy": "Uruguay",
+      "ve": "Venezuela",
+      "vn": "Vietnam"
+    };
+    
+    return countryNames[countryCode] || countryCode;
+  };
 
   return (
     <Card className={`overflow-hidden border hover:shadow-md transition-shadow ${isVertical ? "" : "flex h-32"}`}>
@@ -53,7 +124,7 @@ const EventCard = ({ event, variant = "vertical" }: EventCardProps) => {
             <>
               <span className="mx-1">•</span>
               <MapPin className="h-3 w-3 inline mr-1" />
-              <span>{event.country}</span>
+              <span>{getCountryName(event.country)}</span>
             </>
           )}
         </div>
