@@ -11,8 +11,8 @@ const MainLayout = () => {
         {/* Layout principal con sidebar fijo y contenido */}
         <div className="flex w-full">
           {/* Sidebar fijo en desktop */}
-          <aside className="hidden md:block w-[280px] shrink-0">
-            <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] py-4 pr-6">
+          <aside className="hidden md:block w-[250px] shrink-0">
+            <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] py-4 pr-4">
               <SidebarMenu />
             </div>
           </aside>

@@ -8,7 +8,7 @@ import { BadgeCheck, Edit2, Users } from "lucide-react";
 const ProfileSummary = () => {
   return (
     <Card className="mb-4">
-      <div className="h-24 bg-gradient-to-r from-sales-800 to-sales-600 rounded-t-lg"></div>
+      <div className="h-24 bg-gradient-to-r from-secondary to-[#1a294c] rounded-t-lg"></div>
       <CardHeader className="relative pb-2">
         <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
           <AvatarImage src="/placeholder.svg" alt="@usuario" />
