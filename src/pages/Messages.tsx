@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Send, Paperclip, ArrowLeft } from "lucide-react";
+import { Search, Send, Paperclip, ArrowLeft, Clock, ThumbsUp, Smile, RotateCcw, MoreHorizontal } from "lucide-react";
 
 interface ConversationProps {
   id: string;
@@ -126,19 +126,19 @@ const messagesData: Record<string, MessageProps[]> = {
 
 const ConversationItem = ({ conversation, onClick }: { conversation: ConversationProps, onClick: () => void }) => (
   <div 
-    className={`flex items-center gap-3 p-3 cursor-pointer ${conversation.unread ? 'bg-primary/5' : 'hover:bg-secondary/50'}`}
+    className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50 border-b ${conversation.unread ? 'bg-white font-medium' : ''}`}
     onClick={onClick}
   >
-    <Avatar>
+    <Avatar className="h-12 w-12">
       <AvatarImage src={conversation.avatar || "/placeholder.svg"} alt={conversation.name} />
       <AvatarFallback>{conversation.name.substring(0, 2)}</AvatarFallback>
     </Avatar>
     <div className="flex-1 overflow-hidden">
       <div className="flex justify-between items-center">
-        <span className={`font-medium ${conversation.unread ? 'text-primary font-semibold' : ''}`}>{conversation.name}</span>
-        <span className="text-xs text-muted-foreground">{conversation.time}</span>
+        <span className={`text-base ${conversation.unread ? 'font-semibold' : 'font-medium'}`}>{conversation.name}</span>
+        <span className="text-xs text-gray-500">{conversation.time}</span>
       </div>
-      <p className="text-sm text-muted-foreground truncate">{conversation.lastMessage}</p>
+      <p className="text-sm text-gray-600 truncate">{conversation.lastMessage}</p>
     </div>
     {conversation.unread && <div className="w-2 h-2 rounded-full bg-primary"></div>}
   </div>
@@ -163,13 +163,13 @@ const Messages = () => {
         <h1 className="text-2xl font-bold">Mensajes</h1>
       </div>
       
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-4">
         {/* Messages list - always visible on desktop, hidden on mobile when conversation is selected */}
-        <div className={`col-span-12 md:col-span-4 lg:col-span-3 ${selectedConversation ? 'hidden md:block' : ''}`}>
-          <Card className="h-[calc(100vh-8rem)]">
+        <div className={`col-span-12 md:col-span-4 ${selectedConversation ? 'hidden md:block' : ''}`}>
+          <Card className="h-[calc(100vh-8rem)] bg-white">
             <div className="p-3 border-b">
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
                 <Input
                   type="search"
                   placeholder="Buscar mensajes..."
@@ -190,7 +190,7 @@ const Messages = () => {
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                  <p className="text-muted-foreground">No hay mensajes disponibles</p>
+                  <p className="text-gray-500">No hay mensajes disponibles</p>
                 </div>
               )}
             </div>
@@ -199,8 +199,8 @@ const Messages = () => {
         
         {/* Message content - visible when conversation is selected or on desktop */}
         {selectedConversation ? (
-          <div className="col-span-12 md:col-span-8 lg:col-span-9">
-            <Card className="h-[calc(100vh-8rem)] flex flex-col">
+          <div className="col-span-12 md:col-span-8">
+            <Card className="h-[calc(100vh-8rem)] flex flex-col bg-white shadow-sm">
               <div className="p-3 border-b flex items-center gap-3">
                 <Button 
                   variant="ghost" 
@@ -210,62 +210,83 @@ const Messages = () => {
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
-                <Avatar>
+                <Avatar className="h-12 w-12">
                   <AvatarImage src={selectedConversation.avatar || "/placeholder.svg"} alt={selectedConversation.name} />
                   <AvatarFallback>{selectedConversation.name.substring(0, 2)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="font-medium">{selectedConversation.name}</h2>
-                  <p className="text-xs text-muted-foreground">Enterprise Sales Manager • TechSolutions</p>
+                  <h2 className="font-semibold text-base">{selectedConversation.name}</h2>
+                  <p className="text-xs text-gray-500">Enterprise Sales Manager • TechSolutions</p>
                 </div>
               </div>
               
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
                 {messagesData[selectedConversation.id] ? (
                   messagesData[selectedConversation.id].map((message, index) => (
                     <div 
                       key={index} 
                       className={`flex ${message.isMe ? 'justify-end' : 'justify-start'}`}
                     >
+                      {!message.isMe && (
+                        <Avatar className="h-10 w-10 mr-2 mt-1">
+                          <AvatarImage src="/placeholder.svg" alt={message.sender} />
+                          <AvatarFallback>{message.sender.substring(0, 2)}</AvatarFallback>
+                        </Avatar>
+                      )}
                       <div 
-                        className={`max-w-[80%] p-3 rounded-lg ${
+                        className={`max-w-[80%] ${
                           message.isMe 
-                            ? 'bg-primary text-primary-foreground rounded-tr-none' 
-                            : 'bg-secondary text-secondary-foreground rounded-tl-none'
+                            ? 'bg-[#1a294c] text-white rounded-2xl rounded-tr-none' 
+                            : 'bg-gray-100 text-gray-800 rounded-2xl rounded-tl-none'
                         }`}
                       >
-                        <p>{message.content}</p>
-                        <p className={`text-xs mt-1 ${message.isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                          {message.time}
-                        </p>
+                        {!message.isMe && (
+                          <div className="px-3 pt-2">
+                            <p className="font-medium">{message.sender} • {message.time}</p>
+                          </div>
+                        )}
+                        <div className="p-3 pt-1">
+                          <p>{message.content}</p>
+                          {message.isMe && (
+                            <p className="text-xs mt-1 text-right opacity-80">{message.time}</p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                    <p className="text-muted-foreground">No hay mensajes en esta conversación</p>
+                    <p className="text-gray-500">No hay mensajes en esta conversación</p>
                   </div>
                 )}
               </div>
               
-              <div className="p-3 border-t">
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon">
-                    <Paperclip className="h-4 w-4" />
+              <div className="p-3 border-t bg-white">
+                <div className="flex gap-2 items-center">
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Paperclip className="h-5 w-5 text-gray-500" />
                   </Button>
-                  <Input placeholder="Escribe un mensaje..." className="flex-1" />
-                  <Button size="icon">
-                    <Send className="h-4 w-4" />
-                  </Button>
+                  <Input placeholder="Escribe un mensaje..." className="flex-1 bg-gray-100 border-0" />
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <Smile className="h-5 w-5 text-gray-500" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <ThumbsUp className="h-5 w-5 text-gray-500" />
+                    </Button>
+                    <Button size="icon" className="rounded-full bg-primary">
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </Card>
           </div>
         ) : (
-          <div className="col-span-12 md:col-span-8 lg:col-span-9 hidden md:flex">
-            <Card className="h-[calc(100vh-8rem)] w-full flex flex-col items-center justify-center p-6 text-center">
+          <div className="col-span-12 md:col-span-8 hidden md:flex">
+            <Card className="h-[calc(100vh-8rem)] w-full flex flex-col items-center justify-center p-6 text-center bg-white">
               <p className="text-lg font-medium mb-2">Selecciona una conversación</p>
-              <p className="text-muted-foreground">Elige un chat de la lista para ver los mensajes</p>
+              <p className="text-gray-500">Elige un chat de la lista para ver los mensajes</p>
             </Card>
           </div>
         )}
