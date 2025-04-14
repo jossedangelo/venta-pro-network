@@ -45,7 +45,7 @@ const MainLayout = () => {
           </aside>
           
           {/* Contenido principal */}
-          <main className="flex-1 py-4">
+          <main className="flex-1 py-4 px-4">
             <Outlet />
           </main>
         </div>

@@ -1,11 +1,10 @@
 
-import NavBar from "@/components/NavBar";
-import SidebarMenu from "@/components/SidebarMenu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Send, Paperclip } from "lucide-react";
+import { Search, Send, Paperclip, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ConversationProps {
   name: string;
@@ -109,19 +108,21 @@ const ConversationItem = ({ name, avatar, lastMessage, time, unread }: Conversat
 
 const Messages = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <NavBar />
-      <div className="container grid grid-cols-12 gap-6 py-4">
-        {/* Sidebar */}
-        <aside className="hidden md:block md:col-span-3 lg:col-span-2">
-          <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
-            <SidebarMenu />
-          </div>
-        </aside>
-        
+    <div className="space-y-4">
+      <div className="flex items-center mb-4">
+        <Button asChild variant="outline" size="sm" className="mr-2">
+          <Link to="/">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Inicio
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold">Mensajes</h1>
+      </div>
+      
+      <div className="grid grid-cols-12 gap-6">
         {/* Messages list */}
         <div className="col-span-12 md:col-span-4 lg:col-span-3">
-          <Card className="h-[calc(100vh-5rem)]">
+          <Card className="h-[calc(100vh-8rem)]">
             <div className="p-3 border-b">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -132,7 +133,7 @@ const Messages = () => {
                 />
               </div>
             </div>
-            <div className="overflow-y-auto h-[calc(100vh-9rem)]">
+            <div className="overflow-y-auto h-[calc(100vh-12rem)]">
               {conversations.map((conversation, index) => (
                 <ConversationItem key={index} {...conversation} />
               ))}
@@ -141,8 +142,8 @@ const Messages = () => {
         </div>
         
         {/* Message content */}
-        <div className="col-span-12 md:col-span-5 lg:col-span-7">
-          <Card className="h-[calc(100vh-5rem)] flex flex-col">
+        <div className="col-span-12 md:col-span-8 lg:col-span-9">
+          <Card className="h-[calc(100vh-8rem)] flex flex-col">
             <div className="p-3 border-b flex items-center gap-3">
               <Avatar>
                 <AvatarImage src="/placeholder.svg" alt="Ana Pérez" />
