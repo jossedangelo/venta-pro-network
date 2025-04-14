@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
 import ProfileSummary from "@/components/ProfileSummary";
 import ConnectionCard from "@/components/ConnectionCard";
-import { Share2, Image, BarChart, Award } from "lucide-react";
+import { Share2, Image as ImageIcon, BarChart, Award } from "lucide-react";
 import { useState } from "react";
 import CreatePostDialog from "@/components/CreatePostDialog";
 import { toast } from "@/components/ui/use-toast";
@@ -80,18 +80,28 @@ const Index = () => {
         avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952"
       },
       content: postData.content,
-      timestamp: "Ahora",
+      timestamp: postData.scheduledDate 
+        ? `Programado para ${new Date(postData.scheduledDate).toLocaleString('es-ES', { 
+            day: 'numeric', 
+            month: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          })}` 
+        : "Ahora",
       likes: 0,
       comments: 0,
       hasImage: postData.linkPreview?.image ? true : false,
       imageUrl: postData.linkPreview?.image || "",
-      isVideo: postData.linkPreview?.isVideo || false
+      isVideo: postData.linkPreview?.isVideo || false,
+      isScheduled: !!postData.scheduledDate
     };
     
     setPosts([newPost, ...posts]);
     toast({
-      title: "Post publicado",
-      description: "Tu actualización ha sido publicada correctamente",
+      title: postData.scheduledDate ? "Post programado" : "Post publicado",
+      description: postData.scheduledDate 
+        ? "Tu actualización ha sido programada correctamente" 
+        : "Tu actualización ha sido publicada correctamente",
     });
   };
 
@@ -102,6 +112,9 @@ const Index = () => {
       description: "Tu publicación ha sido eliminada correctamente",
     });
   };
+
+  // Filter out scheduled posts for display if needed
+  const visiblePosts = posts.filter(post => !post.isScheduled);
 
   return (
     <div className="grid grid-cols-12 gap-6">
@@ -121,7 +134,7 @@ const Index = () => {
             </div>
             <div className="flex justify-between">
               <Button variant="ghost" size="sm" className="flex items-center" onClick={handleOpenDialog}>
-                <Image className="mr-2 h-4 w-4" />
+                <ImageIcon className="mr-2 h-4 w-4" />
                 Foto
               </Button>
               <Button variant="ghost" size="sm" className="flex items-center" onClick={handleOpenDialog}>
@@ -148,7 +161,7 @@ const Index = () => {
           </TabsList>
         </Tabs>
         
-        {posts.map((post) => (
+        {visiblePosts.map((post) => (
           <PostCard 
             key={post.id} 
             {...post} 
