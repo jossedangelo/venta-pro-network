@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ const Profile = () => {
     <div className="px-4 md:px-0 pb-8 md:pb-0">
       {/* Profile Header */}
       <Card className="mb-6 overflow-hidden rounded-xl shadow-sm border-0 md:border">
-        <div className="h-32 bg-gradient-to-r from-secondary to-[#1a294c]"></div>
+        <div className="h-32 bg-gradient-to-r from-[#4ade80] to-[#1a294c]"></div>
         <div className="relative px-4 pb-6">
           <Avatar className="h-24 w-24 border-4 border-background absolute -top-12">
             <AvatarImage src="/placeholder.svg" alt="Carlos Rodríguez" />

@@ -49,8 +49,9 @@ const ProfileSummary = () => {
       <div 
         className="h-24 relative"
         style={{ 
-          backgroundColor: "#1a294c",
-          backgroundImage: bannerImage ? `url(${bannerImage})` : 'none',
+          background: bannerImage 
+            ? `url(${bannerImage}) center/cover no-repeat` 
+            : 'linear-gradient(90deg, #4ade80 0%, #1a294c 100%)',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
