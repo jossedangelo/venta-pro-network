@@ -10,34 +10,6 @@ import { Share2, Image, BarChart, Award } from "lucide-react";
 import { useState } from "react";
 import CreatePostDialog from "@/components/CreatePostDialog";
 
-const posts = [
-  {
-    author: {
-      name: "María García",
-      role: "Directora de Ventas en TechCorp",
-      avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80"
-    },
-    content: "Acabo de cerrar el trimestre con un 135% de cumplimiento! Todo el esfuerzo valió la pena. Gracias a mi equipo por el increíble trabajo.",
-    timestamp: "Hace 2 horas",
-    likes: 34,
-    comments: 8,
-    hasImage: false
-  },
-  {
-    author: {
-      name: "Juan Martínez",
-      role: "Account Executive en SaaS Solutions",
-      avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=80"
-    },
-    content: "Compartiendo mi experiencia en el evento de ventas consultivas de ayer. Aprendí técnicas revolucionarias para entender las necesidades ocultas de los clientes.",
-    timestamp: "Hace 5 horas",
-    likes: 22,
-    comments: 4,
-    hasImage: true,
-    imageUrl: "https://images.unsplash.com/photo-1483389127117-b6a2102724ae?q=80&w=1974&auto=format&fit=crop"
-  }
-];
-
 const suggestedConnections = [
   {
     name: "Ana Pérez",
@@ -64,9 +36,55 @@ const suggestedConnections = [
 
 const Index = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [posts, setPosts] = useState([
+    {
+      author: {
+        name: "María García",
+        role: "Directora de Ventas en TechCorp",
+        avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80"
+      },
+      content: "Acabo de cerrar el trimestre con un 135% de cumplimiento! Todo el esfuerzo valió la pena. Gracias a mi equipo por el increíble trabajo.",
+      timestamp: "Hace 2 horas",
+      likes: 34,
+      comments: 8,
+      hasImage: false
+    },
+    {
+      author: {
+        name: "Juan Martínez",
+        role: "Account Executive en SaaS Solutions",
+        avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=80"
+      },
+      content: "Compartiendo mi experiencia en el evento de ventas consultivas de ayer. Aprendí técnicas revolucionarias para entender las necesidades ocultas de los clientes.",
+      timestamp: "Hace 5 horas",
+      likes: 22,
+      comments: 4,
+      hasImage: true,
+      imageUrl: "https://images.unsplash.com/photo-1483389127117-b6a2102724ae?q=80&w=1974&auto=format&fit=crop"
+    }
+  ]);
 
   const handleOpenDialog = () => {
     setDialogOpen(true);
+  };
+
+  const handleNewPost = (postData) => {
+    const newPost = {
+      author: {
+        name: "José D'Angelo",
+        role: "Sales Development Representative",
+        avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952"
+      },
+      content: postData.content,
+      timestamp: "Ahora",
+      likes: 0,
+      comments: 0,
+      hasImage: postData.linkPreview?.image ? true : false,
+      imageUrl: postData.linkPreview?.image || "",
+      isVideo: postData.linkPreview?.isVideo || false
+    };
+    
+    setPosts([newPost, ...posts]);
   };
 
   return (
@@ -138,7 +156,11 @@ const Index = () => {
       </aside>
 
       {/* Post Creation Dialog */}
-      <CreatePostDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <CreatePostDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+        onPublish={handleNewPost}
+      />
     </div>
   );
 };

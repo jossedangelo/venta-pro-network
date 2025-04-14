@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -16,6 +17,7 @@ interface PostCardProps {
   comments: number;
   hasImage?: boolean;
   imageUrl?: string;
+  isVideo?: boolean;
 }
 
 const PostCard = ({ 
@@ -25,7 +27,8 @@ const PostCard = ({
   likes, 
   comments, 
   hasImage = false,
-  imageUrl
+  imageUrl,
+  isVideo = false
 }: PostCardProps) => {
   return (
     <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300">
@@ -44,7 +47,18 @@ const PostCard = ({
         <p className="mb-4">{content}</p>
         {hasImage && imageUrl && (
           <div className="rounded-md overflow-hidden mb-2">
-            <img src={imageUrl} alt="Post content" className="w-full object-cover" />
+            <div className="relative">
+              <img src={imageUrl} alt="Post content" className="w-full object-cover" />
+              {isVideo && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 5V19L19 12L8 5Z" fill="white"/>
+                    </svg>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </CardContent>

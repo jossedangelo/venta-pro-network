@@ -34,9 +34,10 @@ const isValidUrl = (url: string): boolean => {
 interface CreatePostDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onPublish?: (postData: { content: string; linkPreview: LinkPreviewData | null }) => void;
 }
 
-const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
+const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogProps) => {
   const [content, setContent] = useState("");
   const [linkPreview, setLinkPreview] = useState<LinkPreviewData | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -97,6 +98,14 @@ const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
     if (!content.trim()) {
       toast.error("Por favor, escribe algo para publicar");
       return;
+    }
+    
+    // Call the onPublish callback with the post data
+    if (onPublish) {
+      onPublish({
+        content,
+        linkPreview
+      });
     }
     
     toast.success("Publicación creada con éxito");
