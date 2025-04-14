@@ -127,6 +127,14 @@ const Events = () => {
     setNewEvents([newEvent, ...newEvents]);
   };
 
+  const handleExploreEvents = () => {
+    // Find the todos tab element and trigger a click event
+    const todosTab = document.querySelector('[data-state="inactive"][data-value="todos"]');
+    if (todosTab instanceof HTMLElement) {
+      todosTab.click();
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -166,7 +174,7 @@ const Events = () => {
               ) : (
                 <div className="text-center py-10">
                   <p className="text-muted-foreground">Aún no te has inscrito a ningún evento</p>
-                  <Button className="mt-4" onClick={() => document.querySelector('[data-state="inactive"][data-value="todos"]')?.click()}>
+                  <Button className="mt-4" onClick={handleExploreEvents}>
                     Explorar eventos
                   </Button>
                 </div>
