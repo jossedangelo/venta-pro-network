@@ -1,16 +1,80 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BadgeCheck, BriefcaseBusiness, Building, MapPin, ExternalLink, Mail, Phone, Edit2, Plus, Award } from "lucide-react";
+import { BadgeCheck, BriefcaseBusiness, Building, MapPin, ExternalLink, Mail, Phone, Edit2, Plus, Award, ImagePlus } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const Profile = () => {
+  const [bannerImage, setBannerImage] = useState<string | null>(null);
+
+  const handleBannerUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Verificar el tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Formato no válido",
+          description: "Por favor, sube una imagen en formato JPG, PNG o WebP",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Verificar el tamaño del archivo (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Archivo demasiado grande",
+          description: "El tamaño máximo permitido es 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Crear URL para previsualización
+      const imageUrl = URL.createObjectURL(file);
+      setBannerImage(imageUrl);
+      
+      toast({
+        title: "Banner actualizado",
+        description: "Tu imagen de banner se ha actualizado correctamente",
+      });
+    }
+  };
+
   return (
     <div className="px-4 md:px-0 pb-8 md:pb-0">
       {/* Profile Header */}
       <Card className="mb-6 overflow-hidden rounded-xl shadow-sm border-0 md:border">
-        <div className="h-32" style={{ backgroundColor: '#1a294c' }}></div>
+        <div 
+          className="h-32 relative"
+          style={{ 
+            background: bannerImage 
+              ? `url(${bannerImage}) center/cover no-repeat` 
+              : '#1a294c',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          <label 
+            htmlFor="profile-banner-upload" 
+            className="absolute bottom-2 right-2 cursor-pointer"
+            title="Subir banner (Dimensiones recomendadas: 1500x400px)"
+          >
+            <div className="bg-background/70 p-1.5 rounded-full hover:bg-background/90 transition-colors">
+              <ImagePlus className="h-5 w-5 text-foreground" />
+            </div>
+            <input 
+              id="profile-banner-upload" 
+              type="file" 
+              accept="image/jpeg,image/png,image/webp" 
+              className="hidden" 
+              onChange={handleBannerUpload}
+            />
+          </label>
+        </div>
         <div className="relative px-4 pb-6">
           <Avatar className="h-24 w-24 border-4 border-background absolute -top-12">
             <AvatarImage src="/placeholder.svg" alt="Carlos Rodríguez" />
