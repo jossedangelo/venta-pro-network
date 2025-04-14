@@ -2,9 +2,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause } from "lucide-react";
+import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface PostCardProps {
   author: {
@@ -19,6 +26,8 @@ interface PostCardProps {
   hasImage?: boolean;
   imageUrl?: string;
   isVideo?: boolean;
+  onDelete?: () => void;
+  isCurrentUser?: boolean;
 }
 
 const PostCard = ({ 
@@ -29,7 +38,9 @@ const PostCard = ({
   comments, 
   hasImage = false,
   imageUrl,
-  isVideo = false
+  isVideo = false,
+  onDelete,
+  isCurrentUser = true // For demo purposes, defaulting to true
 }: PostCardProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
@@ -65,38 +76,61 @@ const PostCard = ({
 
   return (
     <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300">
-      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
-        <Avatar>
-          <AvatarImage src={author.avatar || "/placeholder.svg"} alt={author.name} />
-          <AvatarFallback>{author.name.substring(0, 2)}</AvatarFallback>
-        </Avatar>
-        <div className="space-y-1">
-          <Link to="/perfil" className="font-semibold hover:underline">{author.name}</Link>
-          <p className="text-sm text-muted-foreground">{author.role}</p>
-          <p className="text-xs text-muted-foreground">{timestamp}</p>
+      <CardHeader className="flex flex-row items-start justify-between pb-2">
+        <div className="flex items-start gap-4">
+          <Avatar>
+            <AvatarImage src={author.avatar || "/placeholder.svg"} alt={author.name} />
+            <AvatarFallback>{author.name.substring(0, 2)}</AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <Link to="/perfil" className="font-semibold hover:underline">{author.name}</Link>
+            <p className="text-sm text-muted-foreground">{author.role}</p>
+            <p className="text-xs text-muted-foreground">{timestamp}</p>
+          </div>
         </div>
+        
+        {isCurrentUser && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreVertical className="h-4 w-4" />
+                <span className="sr-only">More options</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onDelete} className="text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Eliminar</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </CardHeader>
       <CardContent className="pt-2">
         <p className="mb-4">{content}</p>
         {hasImage && imageUrl && (
           <div className="rounded-md overflow-hidden mb-2">
-            <div className="relative">
-              {isVideo && isYouTubeUrl(imageUrl) ? (
+            {isVideo && isYouTubeUrl(imageUrl) ? (
+              <AspectRatio ratio={16/9}>
                 <iframe 
                   src={getYouTubeEmbedUrl(imageUrl)} 
-                  className="w-full aspect-video" 
+                  className="w-full h-full"
                   allowFullScreen
                   title="YouTube video player"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 ></iframe>
-              ) : isVideo ? (
-                <div className="relative">
+              </AspectRatio>
+            ) : isVideo ? (
+              <AspectRatio ratio={16/9}>
+                <div className="relative w-full h-full">
                   <video 
                     ref={(el) => setVideoElement(el)} 
                     src={imageUrl} 
-                    className="w-full object-cover" 
+                    className="w-full h-full object-cover" 
                     controls={false}
-                    poster={imageUrl}
+                    onEnded={() => setIsPlaying(false)}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
                   />
                   {!isPlaying && (
                     <div 
@@ -109,10 +143,10 @@ const PostCard = ({
                     </div>
                   )}
                 </div>
-              ) : (
-                <img src={imageUrl} alt="Post content" className="w-full object-cover" />
-              )}
-            </div>
+              </AspectRatio>
+            ) : (
+              <img src={imageUrl} alt="Post content" className="w-full object-cover rounded" />
+            )}
           </div>
         )}
       </CardContent>

@@ -9,6 +9,7 @@ import ConnectionCard from "@/components/ConnectionCard";
 import { Share2, Image, BarChart, Award } from "lucide-react";
 import { useState } from "react";
 import CreatePostDialog from "@/components/CreatePostDialog";
+import { toast } from "@/components/ui/use-toast";
 
 const suggestedConnections = [
   {
@@ -38,6 +39,7 @@ const Index = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [posts, setPosts] = useState([
     {
+      id: "1",
       author: {
         name: "María García",
         role: "Directora de Ventas en TechCorp",
@@ -50,6 +52,7 @@ const Index = () => {
       hasImage: false
     },
     {
+      id: "2",
       author: {
         name: "Juan Martínez",
         role: "Account Executive en SaaS Solutions",
@@ -70,6 +73,7 @@ const Index = () => {
 
   const handleNewPost = (postData) => {
     const newPost = {
+      id: Date.now().toString(),
       author: {
         name: "José D'Angelo",
         role: "Sales Development Representative",
@@ -85,6 +89,18 @@ const Index = () => {
     };
     
     setPosts([newPost, ...posts]);
+    toast({
+      title: "Post publicado",
+      description: "Tu actualización ha sido publicada correctamente",
+    });
+  };
+
+  const handleDeletePost = (postId) => {
+    setPosts(posts.filter(post => post.id !== postId));
+    toast({
+      title: "Post eliminado",
+      description: "Tu publicación ha sido eliminada correctamente",
+    });
   };
 
   return (
@@ -132,8 +148,13 @@ const Index = () => {
           </TabsList>
         </Tabs>
         
-        {posts.map((post, index) => (
-          <PostCard key={index} {...post} />
+        {posts.map((post) => (
+          <PostCard 
+            key={post.id} 
+            {...post} 
+            onDelete={() => handleDeletePost(post.id)}
+            isCurrentUser={post.author.name === "José D'Angelo"}
+          />
         ))}
       </div>
       
