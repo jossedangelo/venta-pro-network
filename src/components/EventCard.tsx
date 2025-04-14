@@ -4,6 +4,7 @@ import { es } from "date-fns/locale";
 import { ArrowUpRight, Users, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface EventCardProps {
   event: {
@@ -22,11 +23,17 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event, variant = "vertical" }: EventCardProps) => {
+  const navigate = useNavigate();
+  
   const formatDate = (date: Date) => {
     return format(date, "EEE, d MMM yyyy, HH:mm", { locale: es });
   };
   
   const isVertical = variant === "vertical";
+  
+  const handleViewEvent = () => {
+    navigate(`/eventos/${event.id}`);
+  };
   
   // Find country name based on country code
   const getCountryName = (countryCode?: string) => {
@@ -129,7 +136,7 @@ const EventCard = ({ event, variant = "vertical" }: EventCardProps) => {
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="w-full">Ver</Button>
+          <Button variant="outline" className="w-full" onClick={handleViewEvent}>Ver</Button>
           <Button variant="ghost" size="icon" className="shrink-0">
             <ArrowUpRight className="h-4 w-4" />
           </Button>

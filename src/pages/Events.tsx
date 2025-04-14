@@ -1,74 +1,10 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import EventCard from "@/components/EventCard";
 import CreateEventModal from "@/components/CreateEventModal";
-
-// List of countries for display
-const countryNames: { [key: string]: string } = {
-  "es": "España",
-  "ad": "Andorra",
-  "ar": "Argentina",
-  "au": "Australia",
-  "at": "Austria",
-  "be": "Bélgica",
-  "br": "Brasil",
-  "ca": "Canadá",
-  "cl": "Chile",
-  "cn": "China",
-  "co": "Colombia",
-  "cr": "Costa Rica",
-  "hr": "Croacia",
-  "cu": "Cuba",
-  "cz": "República Checa",
-  "dk": "Dinamarca",
-  "do": "República Dominicana",
-  "ec": "Ecuador",
-  "eg": "Egipto",
-  "fi": "Finlandia",
-  "fr": "Francia",
-  "de": "Alemania",
-  "gr": "Grecia",
-  "hk": "Hong Kong",
-  "hu": "Hungría",
-  "is": "Islandia",
-  "in": "India",
-  "id": "Indonesia",
-  "ie": "Irlanda",
-  "il": "Israel",
-  "it": "Italia",
-  "jp": "Japón",
-  "kr": "Corea del Sur",
-  "lu": "Luxemburgo",
-  "my": "Malasia",
-  "mx": "México",
-  "ma": "Marruecos",
-  "nl": "Países Bajos",
-  "nz": "Nueva Zelanda",
-  "no": "Noruega",
-  "pa": "Panamá",
-  "pe": "Perú",
-  "ph": "Filipinas",
-  "pl": "Polonia",
-  "pt": "Portugal",
-  "ro": "Rumanía",
-  "ru": "Rusia",
-  "sa": "Arabia Saudita",
-  "sg": "Singapur",
-  "za": "Sudáfrica",
-  "se": "Suecia",
-  "ch": "Suiza",
-  "tw": "Taiwán",
-  "th": "Tailandia",
-  "tr": "Turquía",
-  "ae": "Emiratos Árabes Unidos",
-  "gb": "Reino Unido",
-  "us": "Estados Unidos",
-  "uy": "Uruguay",
-  "ve": "Venezuela",
-  "vn": "Vietnam"
-};
 
 // Datos de ejemplo para eventos
 const sampleEvents = [
@@ -142,8 +78,34 @@ const recommendedEvents = [
   }
 ];
 
+// Simulamos una lista de eventos a los que el usuario está registrado
+const registeredEventIds = ["2", "5"];
+
 const Events = () => {
   const [myEvents, setMyEvents] = useState(sampleEvents);
+  const [registeredEvents, setRegisteredEvents] = useState<Array<any>>([]);
+  const [newEvents, setNewEvents] = useState<Array<any>>([]);
+  
+  useEffect(() => {
+    // Simulamos la carga de datos desde una API
+    // En una aplicación real, estos datos vendrían de un backend
+    
+    // Filtramos los eventos registrados por el usuario
+    const userRegistered = [...sampleEvents, ...recommendedEvents].filter(
+      event => registeredEventIds.includes(event.id)
+    );
+    setRegisteredEvents(userRegistered);
+    
+    // Identificamos eventos creados esta semana
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    
+    const recentEvents = [...sampleEvents, ...recommendedEvents].filter(event => {
+      return event.date >= startOfWeek;
+    });
+    setNewEvents(recentEvents);
+  }, []);
   
   const handleEventCreated = (eventData: any) => {
     // En una aplicación real, esto enviaría datos al backend
@@ -162,6 +124,7 @@ const Events = () => {
     };
     
     setMyEvents([newEvent, ...myEvents]);
+    setNewEvents([newEvent, ...newEvents]);
   };
 
   return (
@@ -178,36 +141,50 @@ const Events = () => {
 
       <Card>
         <CardContent className="pt-6">
-          <Tabs defaultValue="mis-eventos">
+          <Tabs defaultValue="todos">
             <TabsList className="mb-4">
-              <TabsTrigger value="mis-eventos">Tus eventos</TabsTrigger>
               <TabsTrigger value="todos">Mostrar todo</TabsTrigger>
+              <TabsTrigger value="mis-eventos">Tus eventos</TabsTrigger>
+              <TabsTrigger value="nuevos">Nuevos</TabsTrigger>
             </TabsList>
             
+            <TabsContent value="todos" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...myEvents, ...recommendedEvents].slice(0, 6).map(event => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            </TabsContent>
+            
             <TabsContent value="mis-eventos" className="space-y-4">
-              {myEvents.length > 0 ? (
+              {registeredEvents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {myEvents.map(event => (
+                  {registeredEvents.map(event => (
                     <EventCard key={event.id} event={event} />
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-10">
-                  <p className="text-muted-foreground">Aún no has creado ningún evento</p>
-                  <CreateEventModal 
-                    onEventCreated={handleEventCreated}
-                    trigger={<Button className="mt-4">Crear mi primer evento</Button>}
-                  />
+                  <p className="text-muted-foreground">Aún no te has inscrito a ningún evento</p>
+                  <Button className="mt-4" onClick={() => document.querySelector('[data-state="inactive"][data-value="todos"]')?.click()}>
+                    Explorar eventos
+                  </Button>
                 </div>
               )}
             </TabsContent>
             
-            <TabsContent value="todos" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[...myEvents, ...sampleEvents].slice(0, 6).map(event => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
+            <TabsContent value="nuevos" className="space-y-4">
+              {newEvents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {newEvents.map(event => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10">
+                  <p className="text-muted-foreground">No hay eventos nuevos esta semana</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>

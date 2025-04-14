@@ -18,6 +18,7 @@ import Goals from "./pages/Goals";
 import Selly from "./pages/Selly";
 import ActionPlan from "./pages/ActionPlan";
 import Events from "./pages/Events";
+import EventDetailPage from "./pages/EventDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/mensajes" element={<Messages />} />
             <Route path="/notificaciones" element={<Notifications />} />
             <Route path="/eventos" element={<Events />} />
+            <Route path="/eventos/:id" element={<EventDetailPage />} />
             <Route path="/estadisticas" element={<Statistics />} />
             <Route path="/resultados" element={<Results />} />
             <Route path="/objetivos" element={<Goals />} />
