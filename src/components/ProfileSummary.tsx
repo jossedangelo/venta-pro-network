@@ -51,7 +51,7 @@ const ProfileSummary = () => {
         style={{ 
           background: bannerImage 
             ? `url(${bannerImage}) center/cover no-repeat` 
-            : 'linear-gradient(90deg, #4ade80 0%, #1a294c 100%)',
+            : '#1a294c',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
