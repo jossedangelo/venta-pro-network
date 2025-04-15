@@ -1,7 +1,6 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Home, 
   Briefcase, 
@@ -39,136 +38,118 @@ export function SidebarMenu({ className, closeSidebar }: SidebarProps) {
   };
 
   return (
-    <div className={cn("pb-12", className)}>
+    <div className={cn("pb-12 w-auto", className)}>
       <div className="space-y-4 py-4">
-        {/* Grupo 1: Navegación principal */}
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Principal
-          </h2>
+        {/* Groups with minimal width */}
+        <div className="px-1">
           <div className="space-y-1">
             <Button 
               variant={isActive("/") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/")}
             >
-              <Home className="mr-2 h-4 w-4" />
-              Inicio
+              <Home className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Inicio</span>
             </Button>
             <Button 
               variant={isActive("/red") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/red")}
             >
-              <Users className="mr-2 h-4 w-4" />
-              Mi Red
+              <Users className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Red</span>
             </Button>
             <Button 
               variant={isActive("/empleos") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/empleos")}
             >
-              <Briefcase className="mr-2 h-4 w-4" />
-              Empleos
+              <Briefcase className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Empleos</span>
             </Button>
             <Button 
               variant={isActive("/mensajes") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/mensajes")}
             >
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Mensajes
+              <MessageSquare className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Mensajes</span>
             </Button>
             <Button 
               variant={isActive("/notificaciones") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/notificaciones")}
             >
-              <Bell className="mr-2 h-4 w-4" />
-              Notificaciones
+              <Bell className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Notif.</span>
             </Button>
             <Button 
               variant={isActive("/eventos") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/eventos")}
             >
-              <Calendar className="mr-2 h-4 w-4" />
-              Eventos
+              <Calendar className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Eventos</span>
             </Button>
           </div>
         </div>
 
-        {/* Grupo 2: Performance */}
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Performance
-          </h2>
+        {/* Performance group with minimal width */}
+        <div className="px-1">
           <div className="space-y-1">
             <Button 
               variant={isActive("/resultados") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/resultados")}
             >
-              <LineChart className="mr-2 h-4 w-4" />
-              Mis Resultados
+              <LineChart className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Result.</span>
             </Button>
             <Button 
               variant={isActive("/objetivos") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/objetivos")}
             >
-              <Target className="mr-2 h-4 w-4" />
-              Objetivos
+              <Target className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Obj.</span>
             </Button>
             <Button 
               variant={isActive("/estadisticas") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/estadisticas")}
             >
-              <BarChart className="mr-2 h-4 w-4" />
-              Estadísticas
+              <BarChart className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Estad.</span>
             </Button>
             <Button 
               variant={isActive("/plan-accion") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/plan-accion")}
             >
-              <CheckSquare className="mr-2 h-4 w-4" />
-              Mi Plan de Acción
+              <CheckSquare className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Plan</span>
             </Button>
           </div>
         </div>
 
-        {/* Grupo 3: Asistente IA */}
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Asistente
-          </h2>
+        {/* Minimal IA Assistant and Settings groups */}
+        <div className="px-1">
           <div className="space-y-1">
             <Button 
               variant={isActive("/selly") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/selly")}
             >
-              <Bot className="mr-2 h-4 w-4" />
-              Selly
+              <Bot className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Selly</span>
             </Button>
-          </div>
-        </div>
-
-        {/* Grupo 4: Configuración */}
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Configuración
-          </h2>
-          <div className="space-y-1">
             <Button 
               variant={isActive("/configuracion") ? "default" : "ghost"} 
-              className="w-full justify-start"
+              className="w-full justify-start px-2"
               onClick={() => handleMenuClick("/configuracion")}
             >
-              <Settings className="mr-2 h-4 w-4" />
-              Ajustes
+              <Settings className="mr-1 h-4 w-4" />
+              <span className="text-xs truncate">Config</span>
             </Button>
           </div>
         </div>

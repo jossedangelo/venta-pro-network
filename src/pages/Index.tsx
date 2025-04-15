@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,6 +45,9 @@ const suggestedConnections = [
     city: "Madrid"
   }
 ];
+
+// User's city is used to filter connections
+const userCity = "Madrid"; // This should be dynamically set when user logs in
 
 const Index = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -132,10 +134,13 @@ const Index = () => {
   // Filter out scheduled posts for display if needed
   const visiblePosts = posts.filter(post => !post.isScheduled);
 
+  // Filter connections by user's city
+  const cityConnections = suggestedConnections.filter(conn => conn.city === userCity).slice(0, 4);
+
   return (
     <div className="grid grid-cols-12 gap-6 bg-[#f6f7f8]">
-      {/* Contenido principal */}
-      <div className="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-7">
+      {/* Contenido principal con fondo #f6f7f8 */}
+      <div className="col-span-12 md:col-span-8 lg:col-span-7 xl:col-span-8">
         {/* Compartir actualización */}
         <Card className="mb-4">
           <CardContent className="p-4">
@@ -187,16 +192,16 @@ const Index = () => {
         ))}
       </div>
       
-      {/* Sidebar derecho */}
-      <aside className="hidden md:block md:col-span-4 lg:col-span-4 xl:col-span-3">
-        <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
+      {/* Sidebar derecho con fondo #f6f7f8 */}
+      <aside className="hidden md:block md:col-span-4 lg:col-span-5 xl:col-span-4">
+        <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] bg-[#f6f7f8] px-2">
           <ProfileSummary />
           
-          <Card className="mb-4 mt-4">
+          <Card className="mb-4 mt-4 bg-white">
             <CardContent className="p-4">
-              <h3 className="font-medium mb-3">Conexiones recomendadas</h3>
+              <h3 className="font-medium mb-3">Conexiones en {userCity}</h3>
               <div className="grid gap-4">
-                {suggestedConnections.map((person, index) => (
+                {cityConnections.map((person, index) => (
                   <ConnectionCard key={index} person={person} />
                 ))}
               </div>
