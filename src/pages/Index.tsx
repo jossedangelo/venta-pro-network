@@ -46,8 +46,7 @@ const suggestedConnections = [
   }
 ];
 
-// User's city is used to filter connections
-const userCity = "Madrid"; // This should be dynamically set when user logs in
+const userCity = "Madrid";
 
 const Index = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -131,17 +130,13 @@ const Index = () => {
     });
   };
 
-  // Filter out scheduled posts for display if needed
   const visiblePosts = posts.filter(post => !post.isScheduled);
 
-  // Filter connections by user's city
   const cityConnections = suggestedConnections.filter(conn => conn.city === userCity).slice(0, 4);
 
   return (
-    <div className="grid grid-cols-12 gap-6 bg-[#f6f7f8]">
-      {/* Contenido principal con fondo #f6f7f8 */}
-      <div className="col-span-12 md:col-span-8 lg:col-span-7 xl:col-span-8">
-        {/* Compartir actualización */}
+    <div className="grid grid-cols-12 gap-6">
+      <div className="col-span-12 md:col-span-9">
         <Card className="mb-4">
           <CardContent className="p-4">
             <div className="flex gap-4 items-center mb-4">
@@ -192,9 +187,8 @@ const Index = () => {
         ))}
       </div>
       
-      {/* Sidebar derecho con fondo #f6f7f8 */}
-      <aside className="hidden md:block md:col-span-4 lg:col-span-5 xl:col-span-4">
-        <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] bg-[#f6f7f8] px-2">
+      <aside className="hidden md:block md:col-span-3">
+        <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] px-0">
           <ProfileSummary />
           
           <Card className="mb-4 mt-4 bg-white">
@@ -218,7 +212,6 @@ const Index = () => {
         </div>
       </aside>
 
-      {/* Post Creation Dialog */}
       <CreatePostDialog 
         open={dialogOpen} 
         onOpenChange={setDialogOpen} 
