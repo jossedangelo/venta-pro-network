@@ -1,15 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PostCard from "@/components/PostCard";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import ProfileSummary from "@/components/ProfileSummary";
 import ConnectionCard from "@/components/ConnectionCard";
-import { Share2, Image as ImageIcon, BarChart, Award, ChevronRight } from "lucide-react";
-import { useState } from "react";
 import CreatePostDialog from "@/components/CreatePostDialog";
-import { toast } from "@/components/ui/use-toast";
-import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const suggestedConnections = [
   {
@@ -191,7 +187,7 @@ const Index = () => {
         <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] px-0">
           <ProfileSummary />
           
-          <Card className="mb-4 mt-4 bg-white">
+          <Card className="mb-4 mt-4 bg-white rounded-lg shadow-sm">
             <CardContent className="p-4">
               <h3 className="font-medium mb-3">Conexiones en {userCity}</h3>
               <div className="grid gap-4">
