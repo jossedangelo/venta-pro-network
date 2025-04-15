@@ -1,11 +1,16 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronRight, Share2, Image as ImageIcon, BarChart, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfileSummary from "@/components/ProfileSummary";
 import ConnectionCard from "@/components/ConnectionCard";
 import CreatePostDialog from "@/components/CreatePostDialog";
 import { useState } from "react";
+import PostCard from "@/components/PostCard";
+import { toast } from "@/components/ui/use-toast";
 
 const suggestedConnections = [
   {
