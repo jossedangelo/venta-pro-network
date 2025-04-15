@@ -11,7 +11,7 @@ const MainLayout = () => {
         {/* Layout with sidebars and central content */}
         <div className="flex w-full bg-[#f6f7f8]">
           {/* Left sidebar */}
-          <aside className="hidden md:block w-64 shrink-0 bg-white border-r">
+          <aside className="hidden md:block w-64 shrink-0 bg-white border-r rounded-r-lg">
             <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] py-4">
               <SidebarMenu />
             </div>

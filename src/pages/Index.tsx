@@ -137,7 +137,7 @@ const Index = () => {
 
   return (
     <div className="grid grid-cols-12 gap-6">
-      <div className="col-span-12 md:col-span-9">
+      <div className="col-span-12 md:col-span-8">
         <Card className="mb-4">
           <CardContent className="p-4">
             <div className="flex gap-4 items-center mb-4">
@@ -188,7 +188,7 @@ const Index = () => {
         ))}
       </div>
       
-      <aside className="hidden md:block md:col-span-3">
+      <aside className="hidden md:block md:col-span-4">
         <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] px-0">
           <ProfileSummary />
           
