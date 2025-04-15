@@ -19,7 +19,7 @@ const MainLayout = () => {
           
           {/* Main content - wider central area with symmetric padding */}
           <main className="flex-1 p-4 md:p-6 overflow-x-hidden bg-[#f6f7f8]">
-            <div className="mx-auto max-w-5xl">
+            <div className="mx-auto max-w-5xl pb-16">
               <Outlet />
             </div>
           </main>

@@ -132,12 +132,12 @@ const Index = () => {
   };
 
   const visiblePosts = posts.filter(post => !post.isScheduled);
-
   const cityConnections = suggestedConnections.filter(conn => conn.city === userCity).slice(0, 4);
 
   return (
     <div className="grid grid-cols-12 gap-6">
       <div className="col-span-12 md:col-span-8">
+        {/* Post creation card */}
         <Card className="mb-4">
           <CardContent className="p-4">
             <div className="flex gap-4 items-center mb-4">
@@ -189,7 +189,7 @@ const Index = () => {
       </div>
       
       <aside className="hidden md:block md:col-span-4">
-        <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] px-0">
+        <div className="sticky top-16 min-h-[calc(100vh-5rem)] flex flex-col bg-transparent py-4 pr-4">
           <ProfileSummary />
           
           <Card className="mb-4 mt-4 bg-white rounded-lg shadow-sm">
