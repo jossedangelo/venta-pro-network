@@ -9,17 +9,17 @@ const MainLayout = () => {
       <NavBar />
       <div className="flex-1 flex">
         {/* Layout principal con sidebar fijo y contenido */}
-        <div className="flex w-full">
+        <div className="flex w-full bg-[#f6f7f8]">
           {/* Sidebar fijo en desktop */}
-          <aside className="hidden md:block w-[250px] shrink-0">
-            <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] py-4 pr-4">
+          <aside className="hidden md:block w-auto shrink-0 bg-white border-r">
+            <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)] py-4">
               <SidebarMenu />
             </div>
           </aside>
           
           {/* Contenido principal */}
           <main className="flex-1 p-0 md:p-4 md:pt-6 overflow-x-hidden">
-            <div className="md:max-w-4xl mx-auto">
+            <div className="mx-auto">
               <Outlet />
             </div>
           </main>

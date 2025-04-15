@@ -18,8 +18,6 @@ import {
   Calendar
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Sheet } from "@/components/ui/sheet";
-import { useContext } from "react";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   closeSidebar?: () => void;

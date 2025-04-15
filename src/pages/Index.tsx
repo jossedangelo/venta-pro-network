@@ -6,10 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PostCard from "@/components/PostCard";
 import ProfileSummary from "@/components/ProfileSummary";
 import ConnectionCard from "@/components/ConnectionCard";
-import { Share2, Image as ImageIcon, BarChart, Award } from "lucide-react";
+import { Share2, Image as ImageIcon, BarChart, Award, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import CreatePostDialog from "@/components/CreatePostDialog";
 import { toast } from "@/components/ui/use-toast";
+import { Link } from "react-router-dom";
 
 const suggestedConnections = [
   {
@@ -17,21 +18,32 @@ const suggestedConnections = [
     role: "Sales Manager",
     company: "InnovaTech",
     mutualConnections: 12,
-    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=80"
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=80",
+    city: "Madrid"
   },
   {
     name: "Roberto Silva",
     role: "Account Executive",
     company: "GlobalSoft",
     mutualConnections: 8,
-    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=85"
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?q=85",
+    city: "Barcelona"
   },
   {
     name: "Elena Torres",
     role: "Business Development",
     company: "SalesForce",
     mutualConnections: 15,
-    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=85"
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=85",
+    city: "Madrid"
+  },
+  {
+    name: "Carlos López",
+    role: "Marketing Director",
+    company: "TechMedia",
+    mutualConnections: 5,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80",
+    city: "Madrid"
   }
 ];
 
@@ -49,7 +61,8 @@ const Index = () => {
       timestamp: "Hace 2 horas",
       likes: 34,
       comments: 8,
-      hasImage: false
+      hasImage: false,
+      isScheduled: false
     },
     {
       id: "2",
@@ -63,7 +76,8 @@ const Index = () => {
       likes: 22,
       comments: 4,
       hasImage: true,
-      imageUrl: "https://images.unsplash.com/photo-1483389127117-b6a2102724ae?q=80&w=1974&auto=format&fit=crop"
+      imageUrl: "https://images.unsplash.com/photo-1483389127117-b6a2102724ae?q=80&w=1974&auto=format&fit=crop",
+      isScheduled: false
     }
   ]);
 
@@ -90,10 +104,12 @@ const Index = () => {
         : "Ahora",
       likes: 0,
       comments: 0,
-      hasImage: postData.linkPreview?.image ? true : false,
-      imageUrl: postData.linkPreview?.image || "",
+      hasImage: postData.image || (postData.linkPreview?.image ? true : false),
+      imageUrl: postData.image ? URL.createObjectURL(postData.image) : (postData.linkPreview?.image || ""),
       isVideo: postData.linkPreview?.isVideo || false,
-      isScheduled: !!postData.scheduledDate
+      isScheduled: !!postData.scheduledDate,
+      link: postData.linkPreview?.url || "",
+      videoId: postData.linkPreview?.videoId || ""
     };
     
     setPosts([newPost, ...posts]);
@@ -117,9 +133,9 @@ const Index = () => {
   const visiblePosts = posts.filter(post => !post.isScheduled);
 
   return (
-    <div className="grid grid-cols-12 gap-6">
+    <div className="grid grid-cols-12 gap-6 bg-[#f6f7f8]">
       {/* Contenido principal */}
-      <div className="col-span-12 lg:col-span-8">
+      <div className="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-7">
         {/* Compartir actualización */}
         <Card className="mb-4">
           <CardContent className="p-4">
@@ -172,7 +188,7 @@ const Index = () => {
       </div>
       
       {/* Sidebar derecho */}
-      <aside className="hidden lg:block lg:col-span-4">
+      <aside className="hidden md:block md:col-span-4 lg:col-span-4 xl:col-span-3">
         <div className="sticky top-16 overflow-auto h-[calc(100vh-4rem)]">
           <ProfileSummary />
           
@@ -183,6 +199,14 @@ const Index = () => {
                 {suggestedConnections.map((person, index) => (
                   <ConnectionCard key={index} person={person} />
                 ))}
+              </div>
+              <div className="mt-4 text-center">
+                <Button variant="outline" asChild className="w-full mt-2">
+                  <Link to="/red" className="flex items-center justify-center">
+                    Ver más
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
