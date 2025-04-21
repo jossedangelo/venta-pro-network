@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface User {
@@ -11,6 +10,7 @@ export interface RegisterData {
   password: string;
   firstName: string;
   lastName: string;
+  countryCode?: string;
   phone?: string;
 }
 
@@ -36,6 +36,7 @@ export async function register(data: RegisterData) {
       data: {
         first_name: data.firstName,
         last_name: data.lastName,
+        country_code: data.countryCode,
         phone: data.phone
       }
     }

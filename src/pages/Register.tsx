@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { register, RegisterData } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
+import { CountryPhoneInput } from "@/components/CountryPhoneInput";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Register = () => {
     confirmPassword: "",
     firstName: "",
     lastName: "",
+    countryCode: "es",
     phone: ""
   });
   const [error, setError] = useState("");
@@ -93,16 +95,12 @@ const Register = () => {
                 required 
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Teléfono</label>
-              <Input 
-                type="tel" 
-                name="phone" 
-                placeholder="+34 600 000 000" 
-                value={values.phone} 
-                onChange={handleChange}
-              />
-            </div>
+            <CountryPhoneInput
+              countryCode={values.countryCode}
+              phone={values.phone}
+              onCountryChange={(code) => setValues({ ...values, countryCode: code })}
+              onPhoneChange={(phone) => setValues({ ...values, phone })}
+            />
             <div>
               <label className="block text-sm font-medium mb-1">Contraseña*</label>
               <Input 
