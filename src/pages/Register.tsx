@@ -4,14 +4,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
-import { register } from "@/lib/auth";
-import { toast } from "@/components/ui/use-toast";
+import { register, RegisterData } from "@/lib/auth";
+import { toast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
 
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [values, setValues] = useState({ email: "", password: "", name: "" });
+  const [values, setValues] = useState<RegisterData & { confirmPassword: string }>({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    phone: ""
+  });
   const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,10 +27,17 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (values.password !== values.confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    setLoading(true);
     try {
-      await register(values.email, values.password, values.name);
+      const { confirmPassword, ...registerData } = values;
+      await register(registerData);
       toast({
         title: "Registro exitoso",
         description: "Revisa tu correo para confirmar tu cuenta."
@@ -38,7 +52,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e9e9f7] to-[#f2f5fa] py-8">
-      <Card className="w-full max-w-sm shadow-lg">
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
           <UserPlus className="mx-auto mb-2 text-primary" size={32}/>
           <CardTitle>Crear cuenta</CardTitle>
@@ -47,16 +61,71 @@ const Register = () => {
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-medium mb-1">Nombre</label>
-              <Input type="text" name="name" placeholder="Tu nombre" value={values.name} onChange={handleChange} required />
+              <label className="block text-sm font-medium mb-1">Nombre*</label>
+              <Input 
+                type="text" 
+                name="firstName" 
+                placeholder="Tu nombre" 
+                value={values.firstName} 
+                onChange={handleChange} 
+                required 
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Correo electrónico</label>
-              <Input type="email" name="email" placeholder="tu@email.com" value={values.email} onChange={handleChange} required />
+              <label className="block text-sm font-medium mb-1">Apellidos*</label>
+              <Input 
+                type="text" 
+                name="lastName" 
+                placeholder="Tus apellidos" 
+                value={values.lastName} 
+                onChange={handleChange} 
+                required 
+              />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Contraseña</label>
-              <Input type="password" name="password" placeholder="••••••••" value={values.password} onChange={handleChange} required minLength={4}/>
+              <label className="block text-sm font-medium mb-1">Correo electrónico*</label>
+              <Input 
+                type="email" 
+                name="email" 
+                placeholder="tu@email.com" 
+                value={values.email} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Teléfono</label>
+              <Input 
+                type="tel" 
+                name="phone" 
+                placeholder="+34 600 000 000" 
+                value={values.phone} 
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Contraseña*</label>
+              <Input 
+                type="password" 
+                name="password" 
+                placeholder="••••••••" 
+                value={values.password} 
+                onChange={handleChange} 
+                required 
+                minLength={6}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Confirmar contraseña*</label>
+              <Input 
+                type="password" 
+                name="confirmPassword" 
+                placeholder="••••••••" 
+                value={values.confirmPassword} 
+                onChange={handleChange} 
+                required 
+                minLength={6}
+              />
             </div>
             {error && <div className="text-sm text-destructive">{error}</div>}
             <Button className="w-full mt-2" type="submit" disabled={loading}>
