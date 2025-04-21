@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
@@ -6,9 +5,11 @@ import { Link } from "react-router-dom";
 import { BadgeCheck, Edit2, Users, ImagePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
+import { ImageUpload } from "./ImageUpload";
 
 const ProfileSummary = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const handleBannerUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -44,6 +45,28 @@ const ProfileSummary = () => {
     }
   };
 
+  const handleAvatarUpload = async (publicUrl: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', supabase.auth.getUser()?.user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Foto de perfil actualizada",
+        description: "Tu foto de perfil se ha actualizado correctamente."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error al actualizar la foto de perfil",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <Card className="mb-4">
       <div 
@@ -74,10 +97,20 @@ const ProfileSummary = () => {
         </label>
       </div>
       <CardHeader className="relative pb-2">
-        <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
-          <AvatarImage src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952" alt="@usuario" />
-          <AvatarFallback>CR</AvatarFallback>
-        </Avatar>
+        <div className="relative">
+          <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
+            <AvatarImage src={/* Add user's avatar URL here */} alt="@usuario" />
+            <AvatarFallback>CR</AvatarFallback>
+          </Avatar>
+          <div className="absolute -top-12 left-0">
+            <ImageUpload
+              bucketName="profile-images"
+              folderPath={supabase.auth.getUser()?.user?.id || 'default'}
+              onUploadComplete={handleAvatarUpload}
+              className="opacity-0 hover:opacity-100 transition-opacity"
+            />
+          </div>
+        </div>
         <div className="pt-16">
           <div className="flex justify-between items-start">
             <div>
