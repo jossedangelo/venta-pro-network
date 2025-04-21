@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,8 +19,20 @@ import ActionPlan from "./pages/ActionPlan";
 import Events from "./pages/Events";
 import EventDetailPage from "./pages/EventDetailPage";
 import { SearchProvider } from "./contexts/SearchContext";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { isAuthenticated } from "./lib/auth";
+import { Navigate, useLocation } from "react-router-dom";
 
 const queryClient = new QueryClient();
+
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  return <>{children}</>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -31,7 +42,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route element={<MainLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route element={<PrivateRoute><MainLayout /></PrivateRoute>}>
               <Route path="/" element={<Index />} />
               <Route path="/red" element={<Network />} />
               <Route path="/empleos" element={<Jobs />} />
