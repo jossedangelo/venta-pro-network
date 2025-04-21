@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,24 +18,24 @@ interface ConnectionCardProps {
 const ConnectionCard = ({ person }: ConnectionCardProps) => {
   return (
     <Card className="h-full shadow-light hover:shadow-medium transition-shadow duration-300">
-      <CardHeader className="flex flex-col items-center pb-2">
+      <CardHeader className="flex flex-col items-center pb-1 pt-4">
         <Avatar className="h-16 w-16">
           <AvatarImage src={person.avatar || "/placeholder.svg"} alt={person.name} />
           <AvatarFallback>{person.name.substring(0, 2)}</AvatarFallback>
         </Avatar>
       </CardHeader>
-      <CardContent className="text-center pb-2">
-        <Link to="/perfil" className="font-medium hover:underline">{person.name}</Link>
+      <CardContent className="text-center pt-2 pb-2 space-y-1">
+        <Link to="/perfil" className="block font-medium text-lg hover:underline">{person.name}</Link>
         <p className="text-sm text-muted-foreground">{person.role}</p>
         <p className="text-sm text-muted-foreground">{person.company}</p>
         <p className="text-xs mt-2 text-muted-foreground">
           {person.mutualConnections} conexiones en común
         </p>
       </CardContent>
-      <CardFooter className="flex justify-center pt-2">
+      <CardFooter className="flex justify-center pt-0 pb-4 px-4">
         <Button 
           variant="custom" 
-          className="w-full" 
+          className="w-full max-w-[180px]" 
           size="sm"
         >
           <UserPlus className="mr-2 h-4 w-4" />
@@ -46,3 +47,4 @@ const ConnectionCard = ({ person }: ConnectionCardProps) => {
 };
 
 export default ConnectionCard;
+
