@@ -1,8 +1,10 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
 import MainLayout from "./components/MainLayout";
 import Index from "./pages/Index";
 import Network from "./pages/Network";
@@ -28,9 +30,35 @@ const queryClient = new QueryClient();
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  if (!isAuthenticated()) {
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const isAuth = await isAuthenticated();
+        setAuthenticated(isAuth);
+      } catch (error) {
+        console.error("Error verificando autenticación:", error);
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+    </div>;
+  }
+
+  if (!authenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+  
   return <>{children}</>;
 };
 
