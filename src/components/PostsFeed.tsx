@@ -20,6 +20,7 @@ interface Post {
   profiles: Profile;
 }
 
+// Eliminamos la prop initialPosts que no se usa correctamente
 const PostsFeed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,17 +51,22 @@ const PostsFeed = () => {
       if (error) throw error;
 
       if (data) {
+        // Asegurarnos de que cada post tiene la estructura correcta
         const formattedPosts = data.map(post => ({
           id: post.id,
           content: post.content,
           image_url: post.image_url,
           created_at: post.created_at,
-          profiles: post.profiles as Profile
+          // Comprobar que profiles existe y es del tipo correcto
+          profiles: post.profiles && typeof post.profiles === 'object' 
+            ? post.profiles as Profile
+            : { first_name: 'Usuario', last_name: 'Anónimo' }
         }));
         
         setPosts(formattedPosts);
       }
     } catch (error: any) {
+      console.error("Error fetching posts:", error);
       toast({
         title: "Error al cargar los posts",
         description: error.message,
@@ -72,24 +78,31 @@ const PostsFeed = () => {
   };
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return <div className="flex justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>;
   }
 
   return (
     <div>
-      <CreatePost />
-      {posts.map((post) => (
-        <PostCard
-          key={post.id}
-          author={{
-            name: `${post.profiles.first_name} ${post.profiles.last_name}`,
-            avatar: post.profiles.avatar_url || ""
-          }}
-          content={post.content}
-          imageUrl={post.image_url}
-          timestamp={new Date(post.created_at).toLocaleString()}
-        />
-      ))}
+      <CreatePost onPostCreated={fetchPosts} />
+      {posts.length === 0 ? (
+        <Card className="p-6 text-center text-muted-foreground">
+          No hay publicaciones. ¡Sé el primero en compartir algo!
+        </Card>
+      ) : (
+        posts.map((post) => (
+          <PostCard
+            key={post.id}
+            author={{
+              name: `${post.profiles.first_name} ${post.profiles.last_name}`,
+              role: "Usuario", // Añadimos el rol requerido 
+              avatar: post.profiles.avatar_url || ""
+            }}
+            content={post.content}
+            imageUrl={post.image_url}
+            timestamp={new Date(post.created_at).toLocaleString()}
+          />
+        ))
+      )}
     </div>
   );
 };

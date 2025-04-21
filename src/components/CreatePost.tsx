@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,10 +7,25 @@ import { ImageUpload } from "./ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-export const CreatePost = () => {
+interface CreatePostProps {
+  onPostCreated?: () => void;
+}
+
+export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Obtener el ID del usuario al cargar el componente
+    const getUserId = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUserId(data.user?.id || null);
+    };
+    
+    getUserId();
+  }, []);
 
   const handleSubmit = async () => {
     if (!content.trim() && !imageUrl) {
@@ -22,18 +37,24 @@ export const CreatePost = () => {
       return;
     }
 
+    if (!userId) {
+      toast({
+        title: "Error al crear el post",
+        description: "Debes iniciar sesión para publicar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setPublishing(true);
-      const { data: userData } = await supabase.auth.getUser();
       
-      if (!userData.user) throw new Error("Debes iniciar sesión para publicar.");
-
       const { error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
           image_url: imageUrl,
-          user_id: userData.user.id
+          user_id: userId
         });
 
       if (error) throw error;
@@ -45,7 +66,13 @@ export const CreatePost = () => {
         title: "Post creado",
         description: "Tu publicación se ha creado correctamente."
       });
+
+      // Llamar al callback si existe
+      if (onPostCreated) {
+        onPostCreated();
+      }
     } catch (error: any) {
+      console.error("Error creating post:", error);
       toast({
         title: "Error al crear el post",
         description: error.message,
@@ -54,11 +81,6 @@ export const CreatePost = () => {
     } finally {
       setPublishing(false);
     }
-  };
-
-  const getUserFolder = async () => {
-    const { data } = await supabase.auth.getUser();
-    return data.user?.id || 'default';
   };
 
   return (
@@ -74,14 +96,14 @@ export const CreatePost = () => {
         <div className="flex gap-4 items-start">
           <ImageUpload
             bucketName="post-images"
-            folderPath="default"
+            folderPath={userId || 'default'}
             onUploadComplete={setImageUrl}
             className="flex-1"
           />
           
           <Button 
             onClick={handleSubmit} 
-            disabled={publishing || (!content.trim() && !imageUrl)}
+            disabled={publishing || (!content.trim() && !imageUrl) || !userId}
           >
             {publishing ? "Publicando..." : "Publicar"}
           </Button>

@@ -4,14 +4,46 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { BadgeCheck, Edit2, Users, ImagePlus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import { ImageUpload } from "./ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 
 const ProfileSummary = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getUserData() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUserId(user.id);
+          
+          // Obtener datos del perfil
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', user.id)
+            .single();
+          
+          if (error) {
+            console.error('Error fetching profile:', error);
+          } else if (data) {
+            setAvatarUrl(data.avatar_url);
+          }
+        }
+      } catch (error) {
+        console.error('Error getting user:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    getUserData();
+  }, []);
 
   const handleBannerUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -48,14 +80,16 @@ const ProfileSummary = () => {
   };
 
   const handleAvatarUpload = async (publicUrl: string) => {
+    if (!userId) {
+      toast({
+        title: "Error al actualizar la foto de perfil",
+        description: "Debes iniciar sesión para actualizar tu perfil",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData.user?.id;
-      
-      if (!userId) {
-        throw new Error("Usuario no autenticado");
-      }
-      
       const { error } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
@@ -63,6 +97,8 @@ const ProfileSummary = () => {
 
       if (error) throw error;
 
+      setAvatarUrl(publicUrl);
+      
       toast({
         title: "Foto de perfil actualizada",
         description: "Tu foto de perfil se ha actualizado correctamente."
@@ -75,6 +111,16 @@ const ProfileSummary = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <Card className="mb-4">
+        <CardContent className="p-6 flex justify-center items-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="mb-4">
@@ -108,13 +154,13 @@ const ProfileSummary = () => {
       <CardHeader className="relative pb-2">
         <div className="relative">
           <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
-            <AvatarImage src="" alt="@usuario" />
+            <AvatarImage src={avatarUrl || ""} alt="Perfil" />
             <AvatarFallback>CR</AvatarFallback>
           </Avatar>
           <div className="absolute -top-12 left-0">
             <ImageUpload
               bucketName="profile-images"
-              folderPath="default"
+              folderPath={userId || 'default'}
               onUploadComplete={handleAvatarUpload}
               className="opacity-0 hover:opacity-100 transition-opacity"
             />
