@@ -1,54 +1,57 @@
-
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { BadgeCheck, Edit2, Users, ImagePlus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { BadgeCheck, Users, ImagePlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { ImageUpload } from "./ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
+import { EditProfileDialog } from "./EditProfileDialog";
+
+interface Profile {
+  first_name: string;
+  last_name: string;
+  role?: string;
+  company?: string;
+  about?: string;
+  avatar_url?: string;
+}
 
 const ProfileSummary = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function getUserData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          setUserId(user.id);
-          
-          // Obtener datos del perfil
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('avatar_url')
-            .eq('id', user.id)
-            .single();
-          
-          if (error) {
-            console.error('Error fetching profile:', error);
-          } else if (data) {
-            setAvatarUrl(data.avatar_url);
-          }
-        }
-      } catch (error) {
-        console.error('Error getting user:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    getUserData();
+    fetchProfile();
   }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleBannerUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Verificar el tipo de archivo
       if (!file.type.startsWith('image/')) {
         toast({
           title: "Formato no válido",
@@ -58,7 +61,6 @@ const ProfileSummary = () => {
         return;
       }
 
-      // Verificar el tamaño del archivo (5MB máximo)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "Archivo demasiado grande",
@@ -68,7 +70,6 @@ const ProfileSummary = () => {
         return;
       }
 
-      // Crear URL para previsualización
       const imageUrl = URL.createObjectURL(file);
       setBannerImage(imageUrl);
       
@@ -80,29 +81,22 @@ const ProfileSummary = () => {
   };
 
   const handleAvatarUpload = async (publicUrl: string) => {
-    if (!userId) {
-      toast({
-        title: "Error al actualizar la foto de perfil",
-        description: "Debes iniciar sesión para actualizar tu perfil",
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       const { error } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
-        .eq('id', userId);
+        .eq('id', user.id);
 
       if (error) throw error;
 
-      setAvatarUrl(publicUrl);
-      
       toast({
         title: "Foto de perfil actualizada",
         description: "Tu foto de perfil se ha actualizado correctamente."
       });
+      fetchProfile();
     } catch (error: any) {
       toast({
         title: "Error al actualizar la foto de perfil",
@@ -154,13 +148,13 @@ const ProfileSummary = () => {
       <CardHeader className="relative pb-2">
         <div className="relative">
           <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
-            <AvatarImage src={avatarUrl || ""} alt="Perfil" />
-            <AvatarFallback>CR</AvatarFallback>
+            <AvatarImage src={profile?.avatar_url || ""} alt={profile?.first_name} />
+            <AvatarFallback>{profile?.first_name?.[0]}{profile?.last_name?.[0]}</AvatarFallback>
           </Avatar>
           <div className="absolute -top-12 left-0">
             <ImageUpload
               bucketName="profile-images"
-              folderPath={userId || 'default'}
+              folderPath="avatar"
               onUploadComplete={handleAvatarUpload}
               className="opacity-0 hover:opacity-100 transition-opacity"
             />
@@ -170,24 +164,20 @@ const ProfileSummary = () => {
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">Carlos Rodríguez</h2>
+                <h2 className="text-2xl font-bold">{profile?.first_name} {profile?.last_name}</h2>
                 <BadgeCheck className="h-5 w-5 text-primary" />
               </div>
-              <CardDescription>Director de Ventas en TechSolutions</CardDescription>
+              <CardDescription>{profile?.role} en {profile?.company}</CardDescription>
             </div>
-            <Button variant="outline" size="sm">
-              <Edit2 className="mr-2 h-4 w-4" />
-              Editar perfil
-            </Button>
+            <EditProfileDialog />
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4">
-          <p className="text-sm font-semibold mb-1">Acerca de</p>
+          <p className="text-sm font-semibold mb-1">Sobre mí</p>
           <p className="text-sm text-muted-foreground">
-            Profesional de ventas con más de 10 años de experiencia en tecnología B2B. 
-            Especializado en ventas consultivas y gestión de equipos comerciales de alto rendimiento.
+            {profile?.about || "Añade información sobre ti"}
           </p>
         </div>
         
@@ -199,15 +189,6 @@ const ProfileSummary = () => {
           <Link to="/red" className="text-sm text-primary hover:underline">
             Ver todas
           </Link>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" size="sm" className="w-full">
-            Añadir sección
-          </Button>
-          <Button variant="outline" size="sm" className="w-full">
-            Más
-          </Button>
         </div>
       </CardContent>
     </Card>

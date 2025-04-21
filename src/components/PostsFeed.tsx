@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { CreatePost } from "./CreatePost";
@@ -20,7 +19,6 @@ interface Post {
   profiles: Profile;
 }
 
-// Eliminamos la prop initialPosts que no se usa correctamente
 const PostsFeed = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,13 +49,11 @@ const PostsFeed = () => {
       if (error) throw error;
 
       if (data) {
-        // Asegurarnos de que cada post tiene la estructura correcta
         const formattedPosts = data.map(post => ({
           id: post.id,
           content: post.content,
           image_url: post.image_url,
           created_at: post.created_at,
-          // Comprobar que profiles existe y es del tipo correcto
           profiles: post.profiles && typeof post.profiles === 'object' 
             ? post.profiles as Profile
             : { first_name: 'Usuario', last_name: 'Anónimo' }
@@ -94,12 +90,14 @@ const PostsFeed = () => {
             key={post.id}
             author={{
               name: `${post.profiles.first_name} ${post.profiles.last_name}`,
-              role: "Usuario", // Añadimos el rol requerido 
+              role: "Usuario",
               avatar: post.profiles.avatar_url || ""
             }}
             content={post.content}
             imageUrl={post.image_url}
             timestamp={new Date(post.created_at).toLocaleString()}
+            likes={0}
+            comments={[]}
           />
         ))
       )}
