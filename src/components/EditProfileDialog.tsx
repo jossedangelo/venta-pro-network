@@ -18,9 +18,9 @@ import { toast } from "@/hooks/use-toast";
 interface Profile {
   first_name: string;
   last_name: string;
-  role?: string;
-  company?: string;
-  about?: string;
+  role?: string | null;
+  company?: string | null;
+  about?: string | null;
 }
 
 export function EditProfileDialog() {
@@ -138,7 +138,7 @@ export function EditProfileDialog() {
               <Label htmlFor="role">Cargo</Label>
               <Input
                 id="role"
-                value={profile.role}
+                value={profile.role || ""}
                 onChange={(e) => setProfile({ ...profile, role: e.target.value })}
               />
             </div>
@@ -146,7 +146,7 @@ export function EditProfileDialog() {
               <Label htmlFor="company">Empresa</Label>
               <Input
                 id="company"
-                value={profile.company}
+                value={profile.company || ""}
                 onChange={(e) => setProfile({ ...profile, company: e.target.value })}
               />
             </div>
@@ -154,7 +154,7 @@ export function EditProfileDialog() {
               <Label htmlFor="about">Sobre mí</Label>
               <Textarea
                 id="about"
-                value={profile.about}
+                value={profile.about || ""}
                 onChange={(e) => setProfile({ ...profile, about: e.target.value })}
                 rows={4}
               />
