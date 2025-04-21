@@ -1,36 +1,50 @@
 
+import { createClient } from '@supabase/supabase-js';
+
 export interface User {
   email: string;
   name?: string;
 }
 
-const USER_KEY = "backxy_user";
-const AUTH_KEY = "backxy_authenticated";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
-export function isAuthenticated(): boolean {
-  return Boolean(localStorage.getItem(AUTH_KEY));
+export async function isAuthenticated(): Promise<boolean> {
+  const { data } = await supabase.auth.getSession();
+  return !!data.session;
 }
 
-export function login(email: string): void {
-  localStorage.setItem(AUTH_KEY, "true");
-  // Store minimal user info
-  const user: User = { email };
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+export async function login(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+  if (error) throw error;
+  return data.user;
 }
 
-export function logout(): void {
-  localStorage.removeItem(AUTH_KEY);
-  localStorage.removeItem(USER_KEY);
+export async function register(email: string, password: string, name: string) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { name }
+    }
+  });
+  if (error) throw error;
+  return data.user;
 }
 
-export function getUser(): User | null {
-  const userData = localStorage.getItem(USER_KEY);
-  if (!userData) return null;
-  
-  try {
-    return JSON.parse(userData) as User;
-  } catch (error) {
-    console.error("Error parsing user data:", error);
-    return null;
-  }
+export async function logout(): Promise<void> {
+  await supabase.auth.signOut();
+}
+
+export async function getUser(): Promise<User | null> {
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) return null;
+  return {
+    email: data.user.email!,
+    name: data.user.user_metadata?.name
+  };
 }

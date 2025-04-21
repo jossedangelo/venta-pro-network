@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
-import { login } from "@/lib/auth";
+import { register } from "@/lib/auth";
 import { toast } from "@/components/ui/use-toast";
 import { UserPlus } from "lucide-react";
 
@@ -12,23 +12,28 @@ const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [values, setValues] = useState({ email: "", password: "", name: "" });
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    setTimeout(() => {
-      login(values.email);
+    setError("");
+    try {
+      await register(values.email, values.password, values.name);
       toast({
         title: "Registro exitoso",
-        description: "¡Bienvenido/a a Backxy!"
+        description: "Revisa tu correo para confirmar tu cuenta."
       });
-      navigate("/");
-    }, 900);
+      navigate("/login");
+    } catch (err: any) {
+      setError(err.message || "Error al registrar");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,6 +58,7 @@ const Register = () => {
               <label className="block text-sm font-medium mb-1">Contraseña</label>
               <Input type="password" name="password" placeholder="••••••••" value={values.password} onChange={handleChange} required minLength={4}/>
             </div>
+            {error && <div className="text-sm text-destructive">{error}</div>}
             <Button className="w-full mt-2" type="submit" disabled={loading}>
               {loading ? "Registrando..." : "Registrarse"}
             </Button>

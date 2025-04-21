@@ -12,22 +12,28 @@ const Login = () => {
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      login(values.email);
+    setError("");
+    try {
+      await login(values.email, values.password);
       toast({
         title: "Has iniciado sesión",
         description: "Bienvenido/a de nuevo"
       });
       navigate("/");
-    }, 900);
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,6 +54,7 @@ const Login = () => {
               <label className="block text-sm font-medium mb-1">Contraseña</label>
               <Input type="password" name="password" placeholder="••••••••" value={values.password} onChange={handleChange} required />
             </div>
+            {error && <div className="text-sm text-destructive">{error}</div>}
             <Button className="w-full mt-2" type="submit" disabled={loading}>
               {loading ? "Entrando..." : "Entrar"}
             </Button>
