@@ -24,16 +24,16 @@ export const CreatePost = () => {
 
     try {
       setPublishing(true);
-      const user = supabase.auth.getUser();
+      const { data: userData } = await supabase.auth.getUser();
       
-      if (!user) throw new Error("Debes iniciar sesión para publicar.");
+      if (!userData.user) throw new Error("Debes iniciar sesión para publicar.");
 
       const { error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
           image_url: imageUrl,
-          user_id: user.data.user?.id
+          user_id: userData.user.id
         });
 
       if (error) throw error;
@@ -56,6 +56,11 @@ export const CreatePost = () => {
     }
   };
 
+  const getUserFolder = async () => {
+    const { data } = await supabase.auth.getUser();
+    return data.user?.id || 'default';
+  };
+
   return (
     <Card className="mb-4">
       <CardContent className="p-4">
@@ -69,7 +74,7 @@ export const CreatePost = () => {
         <div className="flex gap-4 items-start">
           <ImageUpload
             bucketName="post-images"
-            folderPath={supabase.auth.getUser()?.user?.id || 'default'}
+            folderPath="default"
             onUploadComplete={setImageUrl}
             className="flex-1"
           />

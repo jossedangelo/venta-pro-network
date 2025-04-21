@@ -1,11 +1,13 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { BadgeCheck, Edit2, Users, ImagePlus } from "lucide-react";
 import { useState } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { ImageUpload } from "./ImageUpload";
+import { supabase } from "@/integrations/supabase/client";
 
 const ProfileSummary = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
@@ -47,10 +49,17 @@ const ProfileSummary = () => {
 
   const handleAvatarUpload = async (publicUrl: string) => {
     try {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      
+      if (!userId) {
+        throw new Error("Usuario no autenticado");
+      }
+      
       const { error } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
-        .eq('id', supabase.auth.getUser()?.user?.id);
+        .eq('id', userId);
 
       if (error) throw error;
 
@@ -99,13 +108,13 @@ const ProfileSummary = () => {
       <CardHeader className="relative pb-2">
         <div className="relative">
           <Avatar className="h-24 w-24 absolute -top-12 border-4 border-background">
-            <AvatarImage src={/* Add user's avatar URL here */} alt="@usuario" />
+            <AvatarImage src="" alt="@usuario" />
             <AvatarFallback>CR</AvatarFallback>
           </Avatar>
           <div className="absolute -top-12 left-0">
             <ImageUpload
               bucketName="profile-images"
-              folderPath={supabase.auth.getUser()?.user?.id || 'default'}
+              folderPath="default"
               onUploadComplete={handleAvatarUpload}
               className="opacity-0 hover:opacity-100 transition-opacity"
             />
