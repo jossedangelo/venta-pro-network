@@ -21,7 +21,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {
-      login();
+      login(values.email);
       toast({
         title: "Has iniciado sesión",
         description: "Bienvenido/a de nuevo"

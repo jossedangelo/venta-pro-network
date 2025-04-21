@@ -4,10 +4,11 @@ import ConnectionCard from "@/components/ConnectionCard";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Connection } from "@/types/connection";
 
 interface SuggestedConnectionsProps {
   userCity: string;
-  suggestedConnections: Array<any>;
+  suggestedConnections: Connection[];
 }
 
 const SuggestedConnections = ({ userCity, suggestedConnections }: SuggestedConnectionsProps) => {
@@ -18,9 +19,13 @@ const SuggestedConnections = ({ userCity, suggestedConnections }: SuggestedConne
       <CardContent className="p-4">
         <h3 className="font-medium mb-3">Conexiones en {userCity}</h3>
         <div className="grid gap-4">
-          {cityConnections.map((person, index) => (
-            <ConnectionCard key={index} person={person} />
-          ))}
+          {cityConnections.length > 0 ? (
+            cityConnections.map((person, index) => (
+              <ConnectionCard key={index} person={person} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No hay conexiones disponibles en tu ciudad</p>
+          )}
         </div>
         <div className="mt-4 text-center">
           <Button variant="outline" asChild className="w-full mt-2">

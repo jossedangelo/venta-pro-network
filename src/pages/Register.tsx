@@ -11,7 +11,7 @@ import { UserPlus } from "lucide-react";
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [values, setValues] = useState({ email: "", password: "" });
+  const [values, setValues] = useState({ email: "", password: "", name: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -22,7 +22,7 @@ const Register = () => {
     setLoading(true);
 
     setTimeout(() => {
-      login();
+      login(values.email);
       toast({
         title: "Registro exitoso",
         description: "¡Bienvenido/a a Backxy!"
@@ -42,8 +42,12 @@ const Register = () => {
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
+              <label className="block text-sm font-medium mb-1">Nombre</label>
+              <Input type="text" name="name" placeholder="Tu nombre" value={values.name} onChange={handleChange} required />
+            </div>
+            <div>
               <label className="block text-sm font-medium mb-1">Correo electrónico</label>
-              <Input type="email" name="email" placeholder="tu@email.com" value={values.email} onChange={handleChange} required autoFocus />
+              <Input type="email" name="email" placeholder="tu@email.com" value={values.email} onChange={handleChange} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Contraseña</label>
