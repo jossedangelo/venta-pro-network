@@ -20,6 +20,7 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -60,18 +61,20 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     try {
       setPublishing(true);
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
           image_url: imageUrl,
           user_id: userId
-        });
+        })
+        .select();
 
       if (error) throw error;
 
       setContent("");
       setImageUrl(null);
+      setPreviewImage(null);
       setShowImageUpload(false);
       
       toast({
@@ -110,13 +113,35 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
           />
         </div>
 
-        {showImageUpload && (
+        {previewImage && (
+          <div className="mb-4 relative">
+            <img 
+              src={previewImage} 
+              alt="Preview" 
+              className="w-full rounded-md max-h-96 object-contain"
+            />
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
+              onClick={() => {
+                setPreviewImage(null);
+                setImageUrl(null);
+              }}
+            >
+              &times;
+            </Button>
+          </div>
+        )}
+
+        {showImageUpload && !previewImage && (
           <div className="mb-4">
             <ImageUpload
               bucketName="post-images"
               folderPath={userId || 'default'}
               onUploadComplete={(url) => {
                 setImageUrl(url);
+                setPreviewImage(url);
                 setShowImageUpload(false);
               }}
             />
@@ -129,7 +154,12 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
               variant="ghost" 
               size="sm" 
               className="text-muted-foreground"
-              onClick={() => setShowImageUpload(!showImageUpload)}
+              onClick={() => {
+                if (!previewImage) {
+                  setShowImageUpload(!showImageUpload);
+                }
+              }}
+              disabled={!!previewImage}
             >
               <ImageIcon className="h-5 w-5 mr-2" />
               Imagen
