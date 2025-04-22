@@ -5,10 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from "@/hooks/use-toast";
 
-export const PostsFeed = () => {
+export const PostsFeed = ({ refreshTrigger = 0 }) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     // Get current user
@@ -20,12 +21,24 @@ export const PostsFeed = () => {
     };
 
     getCurrentUser();
-    fetchPosts();
+    fetchPosts(true);
   }, []);
 
-  const fetchPosts = async () => {
+  // Effect for when the refresh trigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      // When refreshing, don't clear the current posts
+      fetchPosts(false);
+    }
+  }, [refreshTrigger]);
+
+  const fetchPosts = async (initialLoad = false) => {
     try {
-      setLoading(true);
+      if (initialLoad) {
+        setLoading(true);
+      } else {
+        setIsRefreshing(true);
+      }
       
       // Fetch posts with author information
       const { data: postsData, error } = await supabase
@@ -50,6 +63,7 @@ export const PostsFeed = () => {
       if (!postsData || postsData.length === 0) {
         setPosts([]);
         setLoading(false);
+        setIsRefreshing(false);
         return;
       }
 
@@ -92,6 +106,7 @@ export const PostsFeed = () => {
       });
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -108,6 +123,12 @@ export const PostsFeed = () => {
       {!loading && posts.length === 0 && (
         <div className="text-center p-6 border rounded-lg bg-background">
           <p className="text-muted-foreground">No hay publicaciones aún. ¡Sé el primero en compartir algo!</p>
+        </div>
+      )}
+
+      {isRefreshing && (
+        <div className="mb-4">
+          <Skeleton className="w-full h-[200px] rounded-lg" />
         </div>
       )}
       
@@ -136,7 +157,7 @@ export const PostsFeed = () => {
               .eq('id', post.id);
             
             if (!error) {
-              fetchPosts();
+              fetchPosts(false);
             }
           }}
           isCurrentUser={post.user_id === currentUserId}

@@ -50,7 +50,7 @@ const Index = () => {
         <h1 className="text-2xl font-bold mb-4">Actividad</h1>
         <CreatePost onPostCreated={handlePostCreated} />
         <div ref={feedRef}>
-          <PostsFeed key={refreshKey} />
+          <PostsFeed key={refreshKey} refreshTrigger={refreshKey} />
         </div>
       </div>
       <SidebarRight userCity={userCity} suggestedConnections={suggestedConnections} />
