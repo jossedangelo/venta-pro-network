@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageUpload } from "./ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { MessageSquare, Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 
 interface CreatePostProps {
   onPostCreated?: () => void;
@@ -35,7 +35,6 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         setUserProfile(profile);
       }
     };
-    
     getUserData();
   }, []);
 
@@ -48,7 +47,6 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
       });
       return;
     }
-
     if (!userId) {
       toast({
         title: "Error al crear el post",
@@ -57,36 +55,33 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
       });
       return;
     }
-
     try {
       setPublishing(true);
-      
       const { data, error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
           image_url: imageUrl,
           user_id: userId
-        })
-        .select();
-
+        });
       if (error) throw error;
 
+      // Limpiar campos e informar éxito
       setContent("");
       setImageUrl(null);
       setPreviewImage(null);
       setShowImageUpload(false);
-      
+
       toast({
         title: "Post creado",
         description: "Tu publicación se ha creado correctamente."
       });
 
+      // Llamar al callback para refrescar el feed
       if (onPostCreated) {
         onPostCreated();
       }
     } catch (error: any) {
-      console.error("Error creating post:", error);
       toast({
         title: "Error al crear el post",
         description: error.message,
@@ -103,31 +98,36 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         <div className="flex gap-3 mb-4">
           <Avatar className="h-10 w-10">
             <AvatarImage src={userProfile?.avatar_url} />
-            <AvatarFallback>{userProfile?.first_name?.[0]}{userProfile?.last_name?.[0]}</AvatarFallback>
+            <AvatarFallback>
+              {userProfile?.first_name?.[0]}
+              {userProfile?.last_name?.[0]}
+            </AvatarFallback>
           </Avatar>
           <Textarea
             placeholder="¿Sobre qué quieres hablar?"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[60px] flex-1"
+            disabled={publishing}
           />
         </div>
 
         {previewImage && (
           <div className="mb-4 relative">
-            <img 
-              src={previewImage} 
-              alt="Preview" 
+            <img
+              src={previewImage}
+              alt="Preview"
               className="w-full rounded-md max-h-96 object-contain"
             />
-            <Button 
-              variant="destructive" 
-              size="sm" 
+            <Button
+              variant="destructive"
+              size="sm"
               className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
               onClick={() => {
                 setPreviewImage(null);
                 setImageUrl(null);
               }}
+              disabled={publishing}
             >
               &times;
             </Button>
@@ -147,27 +147,26 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             />
           </div>
         )}
-        
+
         <div className="flex justify-between items-center">
           <div className="flex gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="text-muted-foreground"
               onClick={() => {
                 if (!previewImage) {
                   setShowImageUpload(!showImageUpload);
                 }
               }}
-              disabled={!!previewImage}
+              disabled={!!previewImage || publishing}
             >
               <ImageIcon className="h-5 w-5 mr-2" />
               Imagen
             </Button>
           </div>
-          
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={handleSubmit}
             disabled={publishing || (!content.trim() && !imageUrl) || !userId}
           >
             {publishing ? "Publicando..." : "Publicar"}
