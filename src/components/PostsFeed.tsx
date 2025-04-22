@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import PostCard from './PostCard';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,7 +12,6 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    // Get current user
     const getCurrentUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
@@ -25,10 +23,8 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
     fetchPosts(true);
   }, []);
 
-  // Effect for when the refresh trigger changes
   useEffect(() => {
     if (refreshTrigger > 0) {
-      // When refreshing, don't clear the current posts
       fetchPosts(false);
     }
   }, [refreshTrigger]);
@@ -41,7 +37,6 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         setIsRefreshing(true);
       }
       
-      // Fetch posts with author information
       const { data: postsData, error } = await supabase
         .from('posts')
         .select(`
@@ -51,7 +46,8 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
           image_url,
           user_id,
           likes_count,
-          comments_count
+          comments_count,
+          recognize_count
         `)
         .order('created_at', { ascending: false });
 
@@ -60,7 +56,6 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         throw error;
       }
       
-      // If no posts, show empty state
       if (!postsData || postsData.length === 0) {
         setPosts([]);
         setLoading(false);
@@ -68,7 +63,6 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         return;
       }
 
-      // Get user profiles for each post
       const postsWithProfiles = await Promise.all(
         postsData.map(async (post: any) => {
           const { data: profileData, error: profileError } = await supabase
@@ -190,12 +184,14 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
               .from('posts')
               .delete()
               .eq('id', post.id);
-            
             if (!error) {
               fetchPosts(false);
             }
           }}
           isCurrentUser={post.user_id === currentUserId}
+          postId={post.id}
+          recognizeCount={post.recognize_count || 0}
+          currentUserId={currentUserId}
         />
       ))}
     </div>
