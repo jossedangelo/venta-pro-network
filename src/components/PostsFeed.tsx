@@ -27,7 +27,7 @@ export const PostsFeed = () => {
     try {
       setLoading(true);
       
-      // Obtener los posts con información del autor
+      // Fetch posts with author information
       const { data: postsData, error } = await supabase
         .from('posts')
         .select(`
@@ -46,16 +46,16 @@ export const PostsFeed = () => {
         throw error;
       }
       
-      // Si no hay posts, mostrar mensaje
+      // If no posts, show empty state
       if (!postsData || postsData.length === 0) {
         setPosts([]);
         setLoading(false);
         return;
       }
 
-      // Obtener información de usuarios para cada post
+      // Get user profiles for each post
       const postsWithProfiles = await Promise.all(
-        postsData.map(async (post) => {
+        postsData.map(async (post: any) => {
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('first_name, last_name, role, avatar_url')
@@ -115,7 +115,7 @@ export const PostsFeed = () => {
         <PostCard 
           key={post.id}
           author={{
-            name: post.profiles?.first_name + ' ' + post.profiles?.last_name,
+            name: `${post.profiles?.first_name || ''} ${post.profiles?.last_name || ''}`.trim(),
             role: post.profiles?.role || '',
             avatar: post.profiles?.avatar_url
           }}
