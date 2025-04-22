@@ -1,6 +1,7 @@
 
 import { PostsFeed } from "@/components/PostsFeed";
 import SidebarRight from "@/components/SidebarRight";
+import { CreatePost } from "@/components/CreatePost";
 
 const suggestedConnections = [
   {
@@ -27,6 +28,7 @@ const Index = () => (
   <div className="grid grid-cols-12 gap-6">
     <div className="col-span-12 md:col-span-8">
       <h1 className="text-2xl font-bold mb-4">Actividad</h1>
+      <CreatePost onPostCreated={() => window.location.reload()} />
       <PostsFeed />
     </div>
     <SidebarRight userCity={userCity} suggestedConnections={suggestedConnections} />
