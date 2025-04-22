@@ -12,16 +12,16 @@ export const PostsFeed = () => {
 
   const fetchPosts = async () => {
     try {
-      const { data: posts, error } = await supabase
+      const { data: postsData, error } = await supabase
         .from('posts')
         .select(`
-        *,
-        profiles:profiles(*)
-      `)
+          *,
+          profile:profiles!inner(*)
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPosts(posts || []);
+      setPosts(postsData || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
@@ -33,9 +33,9 @@ export const PostsFeed = () => {
         <PostCard 
           key={post.id}
           author={{
-            name: post.profiles?.first_name + ' ' + post.profiles?.last_name,
-            role: post.profiles?.role || '',
-            avatar: post.profiles?.avatar_url
+            name: post.profile?.first_name + ' ' + post.profile?.last_name,
+            role: post.profile?.role || '',
+            avatar: post.profile?.avatar_url
           }}
           content={post.content}
           timestamp={new Date(post.created_at).toLocaleDateString()}
@@ -43,7 +43,7 @@ export const PostsFeed = () => {
           comments={post.comments_count || 0}
           hasImage={!!post.image_url}
           imageUrl={post.image_url}
-          isVideo={post.is_video}
+          isVideo={post.image_url?.includes('youtube.com') || post.image_url?.includes('youtu.be')}
           onDelete={() => {
             // Implement delete functionality here
           }}
