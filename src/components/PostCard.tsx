@@ -9,6 +9,13 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import PostComments from "./PostComments";
 import { toast } from "@/hooks/use-toast";
+import YouTubeEmbed from './YouTubeEmbed';
+import {
+  extractYouTubeIdFromText,
+  isYouTubeUrl,
+  getYouTubeVideoId,
+  getYouTubeEmbedUrl,
+} from "@/utils/youtube";
 
 interface PostCardProps {
   author: {
@@ -29,16 +36,6 @@ interface PostCardProps {
   recognizeCount?: number;
   currentUserId?: string | null;
 }
-
-const extractYouTubeIdFromText = (text: string): string | null => {
-  if (!text) return null;
-  const urlRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11}))/;
-  const match = text.match(urlRegex);
-  if (match && match[2]) {
-    return match[2];
-  }
-  return null;
-};
 
 const PostCard = ({
   author,
@@ -242,15 +239,7 @@ const PostCard = ({
         {content && <p className="mb-4 whitespace-pre-line break-words">{content}</p>}
         {youTubeVideoIdFromContent && (
           <div className="rounded-md overflow-hidden mb-2">
-            <div className="w-full aspect-video bg-black rounded-md overflow-hidden mb-2">
-              <iframe
-                src={`https://www.youtube.com/embed/${youTubeVideoIdFromContent}`}
-                className="w-full h-full rounded-md"
-                allowFullScreen
-                title="Reproductor de video de YouTube"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              />
-            </div>
+            <YouTubeEmbed videoId={youTubeVideoIdFromContent} />
           </div>
         )}
         {hasImage && imageUrl && isYouTubeUrl(imageUrl) && (
@@ -294,7 +283,7 @@ const PostCard = ({
                   <div>
                     <AspectRatio ratio={16/9}>
                       <iframe 
-                        src={`${getYouTubeEmbedUrl(imageUrl)}`}
+                        src={getYouTubeEmbedUrl(imageUrl)}
                         className="w-full h-full absolute inset-0 border-0"
                         allowFullScreen
                         title="Reproductor de video de YouTube"
