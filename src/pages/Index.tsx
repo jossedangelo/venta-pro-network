@@ -49,7 +49,7 @@ const Index = () => {
       <div className="col-span-12 md:col-span-8">
         <h1 className="text-2xl font-bold mb-4">Actividad</h1>
         <CreatePost onPostCreated={handlePostCreated} />
-        <div ref={feedRef}>
+        <div ref={feedRef} className="mt-6">
           <PostsFeed key={refreshKey} refreshTrigger={refreshKey} />
         </div>
       </div>

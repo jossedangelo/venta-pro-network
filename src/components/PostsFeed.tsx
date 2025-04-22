@@ -4,6 +4,7 @@ import PostCard from './PostCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from "@/hooks/use-toast";
+import { LoaderCircle } from "lucide-react";
 
 export const PostsFeed = ({ refreshTrigger = 0 }) => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -114,8 +115,30 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
     <div className="space-y-4">
       {loading && (
         <div className="space-y-4">
+          <div className="flex justify-center items-center mb-4">
+            <LoaderCircle className="h-6 w-6 text-primary animate-spin mr-2" />
+            <span className="text-sm text-muted-foreground">Cargando publicaciones...</span>
+          </div>
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="w-full h-[200px] rounded-lg" />
+            <div key={i} className="bg-white border rounded-lg p-4 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+              </div>
+              <div className="space-y-2 mb-4">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+              <Skeleton className="h-40 w-full rounded" />
+              <div className="flex justify-between mt-4">
+                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-8 w-20" />
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -127,8 +150,20 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
       )}
 
       {isRefreshing && (
-        <div className="mb-4">
-          <Skeleton className="w-full h-[200px] rounded-lg" />
+        <div className="mb-4 bg-white border rounded-lg p-4 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="h-3 w-1/4" />
+            </div>
+          </div>
+          <div className="space-y-2 mb-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+          <Skeleton className="h-40 w-full rounded" />
         </div>
       )}
       
