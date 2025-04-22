@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { format } from "date-fns";
+import { YouTubeVideoDialog } from "./YouTubeVideoDialog";
 
 interface LinkPreviewData {
   url: string;
@@ -59,19 +59,17 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showYouTubeDialog, setShowYouTubeDialog] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Function to simulate fetching link preview data
   const generateLinkPreview = (text: string) => {
-    // Extract URLs from text
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const urls = text.match(urlRegex);
 
     if (urls && urls.length > 0) {
       const url = urls[0];
       
-      // Check if it's a YouTube URL
       const youtubeId = extractYouTubeVideoId(url);
       
       if (youtubeId) {
@@ -83,7 +81,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
           isVideo: true
         });
       } else if (isValidUrl(url)) {
-        // For demo purposes, use placeholder data for non-YouTube URLs
         setLinkPreview({
           url,
           title: "Vista previa del enlace",
@@ -111,7 +108,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
       reader.onload = (e) => {
         if (e.target?.result) {
           setSelectedImage(e.target.result as string);
-          // If there's a link preview, remove it to show the image instead
           setLinkPreview(null);
         }
       };
@@ -134,31 +130,12 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
     }
   };
 
-  // Check for URLs when content changes
-  useEffect(() => {
-    if (content) {
-      generateLinkPreview(content);
-    } else {
-      setLinkPreview(null);
-    }
-  }, [content]);
-
-  // Auto focus the textarea when dialog opens
-  useEffect(() => {
-    if (open && textareaRef.current) {
-      setTimeout(() => {
-        textareaRef.current?.focus();
-      }, 100);
-    }
-  }, [open]);
-
   const handlePublish = () => {
     if (!content.trim() && !selectedImage) {
       toast.error("Por favor, escribe algo o sube una imagen para publicar");
       return;
     }
     
-    // Call the onPublish callback with the post data
     if (onPublish) {
       onPublish({
         content,
@@ -173,7 +150,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
       ? "Publicación programada con éxito" 
       : "Publicación creada con éxito");
     
-    // Reset states
     setContent("");
     setLinkPreview(null);
     setSelectedImage(null);
@@ -201,6 +177,26 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
       toast.success(`Programado para ${format(date, "dd/MM/yyyy HH:mm")}`);
     }
   };
+
+  const youtubeVideoId = linkPreview && linkPreview.isVideo
+    ? extractYouTubeVideoId(linkPreview.url)
+    : null;
+
+  useEffect(() => {
+    if (content) {
+      generateLinkPreview(content);
+    } else {
+      setLinkPreview(null);
+    }
+  }, [content]);
+
+  useEffect(() => {
+    if (open && textareaRef.current) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -233,7 +229,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
           onChange={(e) => setContent(e.target.value)}
         />
 
-        {/* Hidden file input for image upload */}
         <input 
           type="file" 
           ref={fileInputRef} 
@@ -301,9 +296,13 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center">
+                    <button
+                      type="button"
+                      className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center shadow-lg hover:bg-black/80 transition"
+                      onClick={() => setShowYouTubeDialog(true)}
+                    >
                       <Play className="h-8 w-8 text-white" fill="white" />
-                    </div>
+                    </button>
                   </div>
                 </div>
                 
@@ -317,6 +316,11 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
                     </div>
                   </div>
                 </div>
+                <YouTubeVideoDialog
+                  open={showYouTubeDialog}
+                  onOpenChange={setShowYouTubeDialog}
+                  videoId={youtubeVideoId}
+                />
               </div>
             ) : linkPreview.image ? (
               <div>
@@ -346,7 +350,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
 
         <div className="flex justify-between items-center border-t pt-4">
           <div className="flex gap-1">
-            {/* Image Upload Button */}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -356,7 +359,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
               <ImageIcon className="h-5 w-5" />
             </Button>
 
-            {/* Event Calendar Button */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button 
@@ -396,7 +398,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
               </PopoverContent>
             </Popover>
 
-            {/* Emoji Picker Button */}
             <Popover open={showEmojiPicker} onOpenChange={setShowEmojiPicker}>
               <PopoverTrigger asChild>
                 <Button 
@@ -425,7 +426,6 @@ const CreatePostDialog = ({ open, onOpenChange, onPublish }: CreatePostDialogPro
               </PopoverContent>
             </Popover>
 
-            {/* Link Button */}
             <Button 
               variant="ghost" 
               size="icon" 
