@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageUpload } from "./ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { MessageSquare, Image as ImageIcon } from "lucide-react";
 
 interface CreatePostProps {
   onPostCreated?: () => void;
@@ -16,15 +18,24 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
-    // Obtener el ID del usuario al cargar el componente
-    const getUserId = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUserId(data.user?.id || null);
+    const getUserData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setUserProfile(profile);
+      }
     };
     
-    getUserId();
+    getUserData();
   }, []);
 
   const handleSubmit = async () => {
@@ -61,13 +72,13 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
 
       setContent("");
       setImageUrl(null);
+      setShowImageUpload(false);
       
       toast({
         title: "Post creado",
         description: "Tu publicación se ha creado correctamente."
       });
 
-      // Llamar al callback si existe
       if (onPostCreated) {
         onPostCreated();
       }
@@ -86,20 +97,44 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   return (
     <Card className="mb-4">
       <CardContent className="p-4">
-        <Textarea
-          placeholder="¿Qué quieres compartir?"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="mb-4 min-h-[100px]"
-        />
-        
-        <div className="flex gap-4 items-start">
-          <ImageUpload
-            bucketName="post-images"
-            folderPath={userId || 'default'}
-            onUploadComplete={setImageUrl}
-            className="flex-1"
+        <div className="flex gap-3 mb-4">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={userProfile?.avatar_url} />
+            <AvatarFallback>{userProfile?.first_name?.[0]}{userProfile?.last_name?.[0]}</AvatarFallback>
+          </Avatar>
+          <Textarea
+            placeholder="¿Sobre qué quieres hablar?"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[60px] flex-1"
           />
+        </div>
+
+        {showImageUpload && (
+          <div className="mb-4">
+            <ImageUpload
+              bucketName="post-images"
+              folderPath={userId || 'default'}
+              onUploadComplete={(url) => {
+                setImageUrl(url);
+                setShowImageUpload(false);
+              }}
+            />
+          </div>
+        )}
+        
+        <div className="flex justify-between items-center">
+          <div className="flex gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground"
+              onClick={() => setShowImageUpload(!showImageUpload)}
+            >
+              <ImageIcon className="h-5 w-5 mr-2" />
+              Imagen
+            </Button>
+          </div>
           
           <Button 
             onClick={handleSubmit} 
