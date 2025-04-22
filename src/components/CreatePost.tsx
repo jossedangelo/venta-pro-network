@@ -79,7 +79,7 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
       setShowImageUpload(false);
 
       toast({
-        title: "Post creado",
+        title: "Publicación creada",
         description: "Tu publicación se ha creado correctamente."
       });
 
@@ -90,7 +90,7 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     } catch (error: any) {
       console.error("Error creating post:", error);
       toast({
-        title: "Error al crear el post",
+        title: "Error al crear la publicación",
         description: error.message,
         variant: "destructive"
       });
@@ -100,7 +100,7 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   };
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 shadow-sm border">
       <CardContent className="p-4">
         <div className="flex gap-3 mb-4">
           <Avatar className="h-10 w-10">
@@ -111,10 +111,10 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             </AvatarFallback>
           </Avatar>
           <Textarea
-            placeholder="¿Sobre qué quieres hablar?"
+            placeholder="Comparte una actualización o noticia..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="min-h-[60px] flex-1"
+            className="min-h-[60px] flex-1 resize-none"
             disabled={publishing}
           />
         </div>
@@ -155,12 +155,12 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
           </div>
         )}
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center border-t pt-3 mt-2">
           <div className="flex gap-2">
             <Button
               variant="ghost"
               size="sm"
-              className="text-muted-foreground"
+              className="text-muted-foreground flex items-center"
               onClick={() => {
                 if (!previewImage) {
                   setShowImageUpload(!showImageUpload);
@@ -169,12 +169,13 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
               disabled={!!previewImage || publishing}
             >
               <ImageIcon className="h-5 w-5 mr-2" />
-              Imagen
+              Foto
             </Button>
           </div>
           <Button
             onClick={handleSubmit}
             disabled={publishing || (!content.trim() && !imageUrl) || !userId}
+            className="px-6"
           >
             {publishing ? "Publicando..." : "Publicar"}
           </Button>
