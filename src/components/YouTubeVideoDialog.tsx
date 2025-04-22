@@ -12,7 +12,7 @@ export function YouTubeVideoDialog({ open, onOpenChange, videoId }: YouTubeVideo
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl p-0 overflow-hidden">
+      <DialogContent className="max-w-3xl p-0 overflow-hidden" aria-describedby="youtube-video-description">
         <div className="relative aspect-video w-full bg-black rounded-md">
           <iframe
             src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
@@ -22,6 +22,7 @@ export function YouTubeVideoDialog({ open, onOpenChange, videoId }: YouTubeVideo
             title="YouTube video player"
           />
         </div>
+        <span id="youtube-video-description" className="sr-only">Reproductor de video de YouTube</span>
       </DialogContent>
     </Dialog>
   );

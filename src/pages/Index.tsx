@@ -1,14 +1,13 @@
 
 import { PostsFeed } from "@/components/PostsFeed";
 import SidebarRight from "@/components/SidebarRight";
-import { CreatePost } from "@/components/CreatePost";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Edit3 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import CreatePostDialog from "@/components/CreatePostDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const suggestedConnections = [
   {
@@ -65,6 +64,12 @@ const Index = () => {
         });
       }
     }, 100);
+    
+    // Show a success toast
+    toast({
+      title: "Publicación creada",
+      description: "Tu contenido ha sido publicado correctamente",
+    });
   };
   
   return (
