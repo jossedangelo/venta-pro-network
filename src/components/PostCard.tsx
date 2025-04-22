@@ -30,6 +30,16 @@ interface PostCardProps {
   currentUserId?: string | null;
 }
 
+const extractYouTubeIdFromText = (text: string): string | null => {
+  if (!text) return null;
+  const urlRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11}))/;
+  const match = text.match(urlRegex);
+  if (match && match[2]) {
+    return match[2];
+  }
+  return null;
+};
+
 const PostCard = ({
   author,
   content,
@@ -45,7 +55,6 @@ const PostCard = ({
   recognizeCount = 0,
   currentUserId
 }: PostCardProps) => {
-  // Estados de likes y reconocimientos
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const [recognize, setRecognize] = useState(false);
@@ -56,7 +65,6 @@ const PostCard = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Consultar si el usuario ya dio like/recognize
     async function checkStatus() {
       if (!currentUserId || !postId) return;
       const { data: likedRow } = await supabase
@@ -79,7 +87,6 @@ const PostCard = ({
     setRecognizeCnt(recognizeCount);
   }, [currentUserId, postId, likes, recognizeCount]);
 
-  // LIKE
   const toggleLike = async () => {
     if (!currentUserId || !postId) return;
     if (!liked) {
@@ -92,7 +99,6 @@ const PostCard = ({
         toast({ title: "Te ha gustado la publicación" });
       }
     } else {
-      // Remove like
       const { error } = await supabase
         .from("post_likes")
         .delete()
@@ -106,7 +112,6 @@ const PostCard = ({
     }
   };
 
-  // RECOGNIZE
   const toggleRecognize = async () => {
     if (!currentUserId || !postId) return;
     if (!recognize) {
@@ -132,7 +137,6 @@ const PostCard = ({
     }
   };
 
-  // COMPARTIR
   const handleShare = async () => {
     const url = window.location.origin + "#post-" + postId;
     try {
@@ -153,7 +157,6 @@ const PostCard = ({
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "_blank");
   };
 
-  // Video y utilidades igual que antes
   const getYouTubeEmbedUrl = (url: string): string => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url?.match(regExp);
@@ -202,6 +205,8 @@ const PostCard = ({
     };
   }, []);
 
+  const youTubeVideoIdFromContent = extractYouTubeIdFromText(content);
+
   return (
     <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300" id={postId ? `post-${postId}` : undefined}>
       <CardHeader className="flex flex-row items-start justify-between pb-2">
@@ -234,7 +239,20 @@ const PostCard = ({
         )}
       </CardHeader>
       <CardContent className="pt-2">
-        {content && <p className="mb-4">{content}</p>}
+        {content && <p className="mb-4 whitespace-pre-line break-words">{content}</p>}
+        {youTubeVideoIdFromContent && (
+          <div className="rounded-md overflow-hidden mb-2">
+            <div className="w-full aspect-video bg-black rounded-md overflow-hidden mb-2">
+              <iframe
+                src={`https://www.youtube.com/embed/${youTubeVideoIdFromContent}`}
+                className="w-full h-full rounded-md"
+                allowFullScreen
+                title="Reproductor de video de YouTube"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              />
+            </div>
+          </div>
+        )}
         {hasImage && imageUrl && isYouTubeUrl(imageUrl) && (
           <p className="mb-4 text-blue-600 break-words">{imageUrl}</p>
         )}
