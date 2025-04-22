@@ -57,6 +57,8 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     }
     try {
       setPublishing(true);
+      
+      // Insert the post
       const { data, error } = await supabase
         .from('posts')
         .insert({
@@ -64,7 +66,11 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
           image_url: imageUrl,
           user_id: userId
         });
-      if (error) throw error;
+
+      if (error) {
+        console.error("Error creating post:", error);
+        throw error;
+      }
 
       // Limpiar campos e informar éxito
       setContent("");
@@ -77,11 +83,12 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
         description: "Tu publicación se ha creado correctamente."
       });
 
-      // Llamar al callback para refrescar el feed
+      // Llamar al callback para refrescar el feed inmediatamente
       if (onPostCreated) {
         onPostCreated();
       }
     } catch (error: any) {
+      console.error("Error creating post:", error);
       toast({
         title: "Error al crear el post",
         description: error.message,

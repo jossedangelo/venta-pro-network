@@ -2,7 +2,7 @@
 import { PostsFeed } from "@/components/PostsFeed";
 import SidebarRight from "@/components/SidebarRight";
 import { CreatePost } from "@/components/CreatePost";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const suggestedConnections = [
   {
@@ -26,10 +26,22 @@ const suggestedConnections = [
 const userCity = "Madrid";
 
 const Index = () => {
-  const [refreshPosts, setRefreshPosts] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const feedRef = useRef<any>(null);
 
   const handlePostCreated = () => {
-    setRefreshPosts(prev => prev + 1);
+    // Increment the key to force a re-render of the PostsFeed component
+    setRefreshKey(prev => prev + 1);
+    
+    // Scroll to the top of the feed to see the new post
+    setTimeout(() => {
+      if (feedRef.current) {
+        window.scrollTo({
+          top: feedRef.current.offsetTop - 20,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   };
   
   return (
@@ -37,7 +49,9 @@ const Index = () => {
       <div className="col-span-12 md:col-span-8">
         <h1 className="text-2xl font-bold mb-4">Actividad</h1>
         <CreatePost onPostCreated={handlePostCreated} />
-        <PostsFeed key={refreshPosts} />
+        <div ref={feedRef}>
+          <PostsFeed key={refreshKey} />
+        </div>
       </div>
       <SidebarRight userCity={userCity} suggestedConnections={suggestedConnections} />
     </div>

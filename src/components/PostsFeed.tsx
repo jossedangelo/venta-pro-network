@@ -2,12 +2,23 @@
 import { useState, useEffect } from 'react';
 import PostCard from './PostCard';
 import { supabase } from '@/integrations/supabase/client';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export const PostsFeed = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Get current user
+    const getCurrentUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        setCurrentUserId(data.user.id);
+      }
+    };
+
+    getCurrentUser();
     fetchPosts();
   }, []);
 
@@ -43,8 +54,10 @@ export const PostsFeed = () => {
   return (
     <div className="space-y-4">
       {loading && (
-        <div className="flex justify-center p-6">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="w-full h-[200px] rounded-lg" />
+          ))}
         </div>
       )}
       
@@ -79,7 +92,7 @@ export const PostsFeed = () => {
               fetchPosts();
             }
           }}
-          isCurrentUser={true}
+          isCurrentUser={post.user_id === currentUserId}
         />
       ))}
     </div>
