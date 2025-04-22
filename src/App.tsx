@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +24,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { isAuthenticated } from "./lib/auth";
 import { Navigate, useLocation } from "react-router-dom";
+import TempSeed from "./pages/TempSeed";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +72,7 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/temp-seed" element={<TempSeed />} />
             <Route element={<PrivateRoute><MainLayout /></PrivateRoute>}>
               <Route path="/" element={<Index />} />
               <Route path="/red" element={<Network />} />
