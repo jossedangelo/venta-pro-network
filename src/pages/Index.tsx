@@ -1,5 +1,5 @@
 
-import PostsFeed from "@/components/PostsFeed";
+import { PostsFeed } from "@/components/PostsFeed";
 import SidebarRight from "@/components/SidebarRight";
 
 const suggestedConnections = [
