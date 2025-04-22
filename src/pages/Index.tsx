@@ -27,14 +27,16 @@ const userCity = "Madrid";
 
 const Index = () => {
   const [refreshPosts, setRefreshPosts] = useState(0);
+
+  const handlePostCreated = () => {
+    setRefreshPosts(prev => prev + 1);
+  };
   
   return (
     <div className="grid grid-cols-12 gap-6">
       <div className="col-span-12 md:col-span-8">
         <h1 className="text-2xl font-bold mb-4">Actividad</h1>
-        <CreatePost 
-          onPostCreated={() => setRefreshPosts(prev => prev + 1)} 
-        />
+        <CreatePost onPostCreated={handlePostCreated} />
         <PostsFeed key={refreshPosts} />
       </div>
       <SidebarRight userCity={userCity} suggestedConnections={suggestedConnections} />

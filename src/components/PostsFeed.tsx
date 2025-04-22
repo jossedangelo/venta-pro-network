@@ -14,26 +14,34 @@ export const PostsFeed = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      // Modificamos la consulta para evitar el error de relación
       const { data: postsData, error } = await supabase
         .from('posts')
         .select(`
           *,
-          profiles:user_id(*)
+          profiles (
+            first_name,
+            last_name,
+            role,
+            avatar_url
+          )
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching posts:', error);
+        throw error;
+      }
+      
       setPosts(postsData || []);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
+    <div className="space-y-4">
       {loading && (
         <div className="flex justify-center p-6">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
@@ -61,8 +69,15 @@ export const PostsFeed = () => {
           hasImage={!!post.image_url}
           imageUrl={post.image_url}
           isVideo={post.image_url?.includes('youtube.com') || post.image_url?.includes('youtu.be')}
-          onDelete={() => {
-            // Implement delete functionality here
+          onDelete={async () => {
+            const { error } = await supabase
+              .from('posts')
+              .delete()
+              .eq('id', post.id);
+            
+            if (!error) {
+              fetchPosts();
+            }
           }}
           isCurrentUser={true}
         />
