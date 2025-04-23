@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // FIX Button not defined
 import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -17,7 +17,6 @@ import {
   getYouTubeVideoId,
   getYouTubeEmbedUrl,
 } from "@/utils/youtube";
-import PostActionButton from "./PostActionButton";
 
 interface PostCardProps {
   author: {
@@ -58,7 +57,8 @@ const PostCard = ({
   const [likeCount, setLikeCount] = useState(likes);
   const [recognize, setRecognize] = useState(false);
   const [recognizeCnt, setRecognizeCnt] = useState(recognizeCount);
-  const [showComments, setShowComments] = useState(false);
+  // By default show comments if there are any
+  const [showComments, setShowComments] = useState(comments > 0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -84,7 +84,9 @@ const PostCard = ({
     checkStatus();
     setLikeCount(likes);
     setRecognizeCnt(recognizeCount);
-  }, [currentUserId, postId, likes, recognizeCount]);
+    // Show comments by default if there are any
+    setShowComments(comments > 0);
+  }, [currentUserId, postId, likes, recognizeCount, comments]);
 
   const toggleLike = async () => {
     if (!currentUserId || !postId) return;
@@ -177,7 +179,6 @@ const PostCard = ({
 
   const handlePlayClick = () => {
     if (!videoRef.current) return;
-    
     if (isPlaying) {
       videoRef.current.pause();
     } else {
@@ -205,6 +206,15 @@ const PostCard = ({
   }, []);
 
   const youTubeVideoIdFromContent = extractYouTubeIdFromText(content);
+
+  // DIRECT STYLING + LABELS: use minimal bg, text only on icon/label, border only if selected or outline
+  const actionBtnStyle = (selected: boolean, outline?: boolean) =>
+    `inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors
+     ${outline 
+      ? "border border-blue-400 text-blue-700 bg-transparent hover:bg-blue-50"
+      : "bg-transparent"}
+     ${selected ? "ring-2 ring-blue-500 border-blue-500" : "text-neutral-700"}
+    `;
 
   return (
     <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300" id={postId ? `post-${postId}` : undefined}>
@@ -343,35 +353,52 @@ const PostCard = ({
         )}
       </CardContent>
       <CardFooter className="border-t pt-4 flex flex-wrap items-center gap-2 bg-transparent">
-        <PostActionButton
-          icon={<ThumbsUp className={`h-4 w-4 ${liked ? "text-blue-600" : ""}`} />}
-          label="Me gusta"
-          count={likeCount}
-          selected={liked}
+        {/* "Me gusta" action */}
+        <button
+          className={actionBtnStyle(liked)}
           onClick={toggleLike}
-        />
-        <PostActionButton
-          icon={<Award className={`h-4 w-4 ${recognize ? "text-yellow-500" : ""}`} />}
-          label="Muy Top"
-          count={recognizeCnt}
-          selected={recognize}
+          type="button"
+        >
+          <ThumbsUp className={"h-5 w-5" + (liked ? " text-blue-600" : " text-neutral-700")} />
+          <span className={liked ? "text-blue-600 font-medium" : "text-neutral-700"}>Me gusta</span>
+          <span className={liked ? "text-blue-600 font-medium" : "text-neutral-700"}>{likeCount}</span>
+        </button>
+
+        {/* "Muy Top" action */}
+        <button
+          className={actionBtnStyle(recognize)}
           onClick={toggleRecognize}
-        />
-        <PostActionButton
-          icon={<MessageSquare className="h-4 w-4" />}
-          label="Comentario"
-          count={comments}
-          selected={showComments}
+          type="button"
+        >
+          <Award className={"h-5 w-5" + (recognize ? " text-yellow-500" : " text-neutral-700")} />
+          <span className={recognize ? "text-yellow-500 font-medium" : "text-neutral-700"}>Muy Top</span>
+          <span className={recognize ? "text-yellow-500 font-medium" : "text-neutral-700"}>{recognizeCnt}</span>
+        </button>
+
+        {/* Comentario */}
+        <button
+          className={actionBtnStyle(showComments, true)}
           onClick={() => setShowComments(v => !v)}
-        />
+          type="button"
+          style={showComments ? { background: "#f2f7fb", borderColor: "#2563eb" } : {}}
+        >
+          <MessageSquare className="h-5 w-5 text-neutral-700" />
+          <span className={showComments ? "text-blue-700 font-medium" : "text-neutral-700"}>Comentario</span>
+          <span className={showComments ? "text-blue-700 font-medium" : "text-neutral-700"}>{comments}</span>
+        </button>
+
+        {/* Compartir */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div>
-              <PostActionButton
-                icon={<Share2 className="h-4 w-4" />}
-                label="Compartir"
-                variant="outline"
-              />
+              <button
+                className={actionBtnStyle(false, true)}
+                type="button"
+              >
+                <Share2 className="h-5 w-5 text-neutral-700" />
+                <span className="text-neutral-700">Compartir</span>
+                <span className="text-neutral-700">{0}</span>
+              </button>
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -381,7 +408,8 @@ const PostCard = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </CardFooter>
-      {showComments && postId && currentUserId && (
+      {/* Always render comments panel if there are any, or if showComments is on */}
+      {(showComments && postId && currentUserId) && (
         <PostComments postId={postId} currentUserId={currentUserId} />
       )}
     </Card>
@@ -389,3 +417,4 @@ const PostCard = ({
 };
 
 export default PostCard;
+
