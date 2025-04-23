@@ -1,1 +1,5 @@
+
 project_id = "ovvwxqiccfvsjjbnxgmf"
+
+[functions.increment_comment_count]
+verify_jwt = true
