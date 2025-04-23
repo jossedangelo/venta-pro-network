@@ -18,12 +18,12 @@ const PostActionButton: React.FC<PostActionButtonProps> = ({
   onClick,
   variant = "ghost",
 }) => {
-  // Elegimos el color del texto o del icono dependiendo del estado
   const baseClass =
+    // Siempre fondo transparente, solo borde si outline
     "inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors " +
     (variant === "outline"
       ? "border border-blue-400 text-blue-700 bg-transparent hover:bg-blue-50"
-      : "bg-transparent hover:bg-accent hover:text-accent-foreground");
+      : "bg-transparent");
 
   const textClass = selected ? "text-blue-600" : "text-neutral-700";
 
