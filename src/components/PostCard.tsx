@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -16,6 +15,7 @@ import {
   getYouTubeVideoId,
   getYouTubeEmbedUrl,
 } from "@/utils/youtube";
+import PostActionButton from "./PostActionButton";
 
 interface PostCardProps {
   author: {
@@ -340,40 +340,37 @@ const PostCard = ({
           </div>
         )}
       </CardContent>
-      <CardFooter className="border-t pt-4 flex flex-wrap items-center gap-2">
-        <Button
-          variant={liked ? "default" : "ghost"}
-          size="sm"
-          className={`flex gap-1 ${liked ? "text-blue-600" : ""}`}
+      <CardFooter className="border-t pt-4 flex flex-wrap items-center gap-2 bg-transparent">
+        <PostActionButton
+          icon={<ThumbsUp className={`h-4 w-4 ${liked ? "text-blue-600" : ""}`} />}
+          label="Me gusta"
+          count={likeCount}
+          selected={liked}
           onClick={toggleLike}
-        >
-          <ThumbsUp className={`h-4 w-4 ${liked ? "fill-blue-600" : ""}`} />
-          <span>{likeCount}</span>
-        </Button>
-        <Button
-          variant={recognize ? "custom" : "ghost"}
-          size="sm"
-          className={`flex gap-1 ${recognize ? "text-yellow-500" : ""}`}
+        />
+        <PostActionButton
+          icon={<Award className={`h-4 w-4 ${recognize ? "text-yellow-500" : ""}`} />}
+          label="Muy Top"
+          count={recognizeCnt}
+          selected={recognize}
           onClick={toggleRecognize}
-        >
-          <Award className={`h-4 w-4 ${recognize ? "fill-yellow-500 text-yellow-500" : ""}`} />
-          <span>{recognizeCnt}</span>
-        </Button>
-        <Button
-          variant={showComments ? "secondary" : "ghost"}
-          size="sm"
-          className="flex gap-1"
+        />
+        <PostActionButton
+          icon={<MessageSquare className="h-4 w-4" />}
+          label="Comentario"
+          count={comments}
+          selected={showComments}
           onClick={() => setShowComments(v => !v)}
-        >
-          <MessageSquare className="h-4 w-4" />
-          <span>{comments}</span>
-        </Button>
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="flex gap-1">
-              <Share2 className="h-4 w-4" />
-              <span>Compartir</span>
-            </Button>
+            <div>
+              <PostActionButton
+                icon={<Share2 className="h-4 w-4" />}
+                label="Compartir"
+                variant="outline"
+              />
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={handleShare}>Copiar enlace</DropdownMenuItem>
