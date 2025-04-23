@@ -1,21 +1,14 @@
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button"; // FIX Button not defined
-import { MessageSquare, ThumbsUp, Share2, Award, Play, Pause, MoreVertical, Trash2, Youtube } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import PostComments from "./PostComments";
 import { toast } from "@/hooks/use-toast";
-import YouTubeEmbed from './YouTubeEmbed';
+import PostCardHeader from "./PostCardHeader";
+import PostCardContent from "./PostCardContent";
+import PostCardActions from "./PostCardActions";
 import {
-  extractYouTubeIdFromText,
-  isYouTubeUrl,
-  getYouTubeVideoId,
-  getYouTubeEmbedUrl,
+  extractYouTubeIdFromText
 } from "@/utils/youtube";
 
 interface PostCardProps {
@@ -59,9 +52,6 @@ const PostCard = ({
   const [recognizeCnt, setRecognizeCnt] = useState(recognizeCount);
   // By default show comments if there are any
   const [showComments, setShowComments] = useState(comments > 0);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     async function checkStatus() {
@@ -158,255 +148,39 @@ const PostCard = ({
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "_blank");
   };
 
-  const getYouTubeEmbedUrl = (url: string): string => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url?.match(regExp);
-    if (match && match[2].length === 11) {
-      return `https://www.youtube.com/embed/${match[2]}?autoplay=1`;
-    }
-    return url;
-  };
-  const isYouTubeUrl = (url?: string): boolean => {
-    if (!url) return false;
-    return url.includes('youtube.com') || url.includes('youtu.be');
-  };
-  const getYouTubeVideoId = (url?: string): string | null => {
-    if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
-
-  const handlePlayClick = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play();
-    }
-  };
-
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    if (!videoElement) return;
-
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => setIsPlaying(false);
-
-    videoElement.addEventListener('play', handlePlay);
-    videoElement.addEventListener('pause', handlePause);
-    videoElement.addEventListener('ended', handleEnded);
-
-    return () => {
-      videoElement.removeEventListener('play', handlePlay);
-      videoElement.removeEventListener('pause', handlePause);
-      videoElement.removeEventListener('ended', handleEnded);
-    };
-  }, []);
-
-  const youTubeVideoIdFromContent = extractYouTubeIdFromText(content);
-
-  // DIRECT STYLING + LABELS: use minimal bg, text only on icon/label, border only if selected or outline
-  const actionBtnStyle = (selected: boolean, outline?: boolean) =>
-    `inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors
-     ${outline 
-      ? "border border-blue-400 text-blue-700 bg-transparent hover:bg-blue-50"
-      : "bg-transparent"}
-     ${selected ? "ring-2 ring-blue-500 border-blue-500" : "text-neutral-700"}
-    `;
-
   return (
     <Card className="mb-4 shadow-light hover:shadow-medium transition-shadow duration-300" id={postId ? `post-${postId}` : undefined}>
-      <CardHeader className="flex flex-row items-start justify-between pb-2">
-        <div className="flex items-start gap-4">
-          <Avatar>
-            <AvatarImage src={author.avatar || "/placeholder.svg"} alt={author.name} />
-            <AvatarFallback>{author.name.substring(0, 2)}</AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <Link to="/perfil" className="font-semibold hover:underline">{author.name}</Link>
-            <p className="text-sm text-muted-foreground">{author.role}</p>
-            <p className="text-xs text-muted-foreground">{timestamp}</p>
-          </div>
-        </div>
-        {isCurrentUser && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">Más opciones</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onDelete} className="text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Eliminar</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+      <CardHeader>
+        <PostCardHeader
+          author={author}
+          timestamp={timestamp}
+          isCurrentUser={isCurrentUser!}
+          onDelete={onDelete}
+        />
       </CardHeader>
       <CardContent className="pt-2">
-        {content && <p className="mb-4 whitespace-pre-line break-words">{content}</p>}
-        {youTubeVideoIdFromContent && (
-          <div className="rounded-md overflow-hidden mb-2">
-            <YouTubeEmbed videoId={youTubeVideoIdFromContent} />
-          </div>
-        )}
-        {hasImage && imageUrl && isYouTubeUrl(imageUrl) && (
-          <p className="mb-4 text-blue-600 break-words">{imageUrl}</p>
-        )}
-        {hasImage && imageUrl && (
-          <div className="rounded-md overflow-hidden mb-2" ref={containerRef}>
-            {isVideo && isYouTubeUrl(imageUrl) ? (
-              <Card className="border overflow-hidden">
-                {!isPlaying ? (
-                  <div>
-                    <AspectRatio ratio={16/9}>
-                      <div className="w-full h-full relative">
-                        <img 
-                          src={`https://img.youtube.com/vi/${getYouTubeVideoId(imageUrl)}/maxresdefault.jpg`} 
-                          alt="Miniatura de video de YouTube"
-                          className="w-full h-full object-cover"
-                        />
-                        <button 
-                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-black/20"
-                          onClick={() => setIsPlaying(true)}
-                        >
-                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center">
-                            <Play className="h-8 w-8 text-white" fill="white" />
-                          </div>
-                        </button>
-                      </div>
-                    </AspectRatio>
-                    <div className="p-4 bg-white">
-                      <div className="flex items-start">
-                        <Youtube className="h-5 w-5 mr-3 text-red-600 mt-1 flex-shrink-0" />
-                        <div>
-                          <h3 className="font-semibold text-base">Video de YouTube</h3>
-                          <p className="text-muted-foreground text-sm">Haz clic para reproducir este video</p>
-                          <p className="text-blue-600 text-sm mt-1">{imageUrl}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <AspectRatio ratio={16/9}>
-                      <iframe 
-                        src={getYouTubeEmbedUrl(imageUrl)}
-                        className="w-full h-full absolute inset-0 border-0"
-                        allowFullScreen
-                        title="Reproductor de video de YouTube"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      ></iframe>
-                    </AspectRatio>
-                  </div>
-                )}
-              </Card>
-            ) : isVideo ? (
-              <div className="w-full relative bg-black rounded-md">
-                <AspectRatio ratio={16/9}>
-                  <div className="absolute inset-0">
-                    <video 
-                      ref={videoRef}
-                      src={imageUrl} 
-                      className="w-full h-full object-cover" 
-                      playsInline
-                    />
-                    {!isPlaying && (
-                      <div className="absolute inset-0">
-                        <div className="absolute top-4 left-4 text-white text-2xl font-bold tracking-tight">
-                          <h3 className="text-4xl mb-2">Video</h3>
-                          <p className="text-xl font-normal opacity-80">Haz clic para reproducir</p>
-                        </div>
-                        <button 
-                          className="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer"
-                          onClick={handlePlayClick}
-                        >
-                          <div className="rounded-full bg-black/70 w-16 h-16 flex items-center justify-center hover:bg-black/80 transition-colors">
-                            <Play className="h-8 w-8 text-white" />
-                          </div>
-                        </button>
-                      </div>
-                    )}
-                    {isPlaying && (
-                      <div className="absolute bottom-4 right-4">
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="rounded-full bg-black/70 border-0 hover:bg-black/80"
-                          onClick={handlePlayClick}
-                        >
-                          <Pause className="h-5 w-5 text-white" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </AspectRatio>
-              </div>
-            ) : (
-              <img src={imageUrl} alt="Contenido del post" className="w-full object-cover rounded" />
-            )}
-          </div>
-        )}
+        <PostCardContent 
+          content={content}
+          hasImage={hasImage}
+          imageUrl={imageUrl}
+          isVideo={isVideo}
+        />
       </CardContent>
-      <CardFooter className="border-t pt-4 flex flex-wrap items-center gap-2 bg-transparent">
-        {/* "Me gusta" action */}
-        <button
-          className={actionBtnStyle(liked)}
-          onClick={toggleLike}
-          type="button"
-        >
-          <ThumbsUp className={"h-5 w-5" + (liked ? " text-blue-600" : " text-neutral-700")} />
-          <span className={liked ? "text-blue-600 font-medium" : "text-neutral-700"}>Me gusta</span>
-          <span className={liked ? "text-blue-600 font-medium" : "text-neutral-700"}>{likeCount}</span>
-        </button>
-
-        {/* "Muy Top" action */}
-        <button
-          className={actionBtnStyle(recognize)}
-          onClick={toggleRecognize}
-          type="button"
-        >
-          <Award className={"h-5 w-5" + (recognize ? " text-yellow-500" : " text-neutral-700")} />
-          <span className={recognize ? "text-yellow-500 font-medium" : "text-neutral-700"}>Muy Top</span>
-          <span className={recognize ? "text-yellow-500 font-medium" : "text-neutral-700"}>{recognizeCnt}</span>
-        </button>
-
-        {/* Comentario */}
-        <button
-          className={actionBtnStyle(showComments, true)}
-          onClick={() => setShowComments(v => !v)}
-          type="button"
-          style={showComments ? { background: "#f2f7fb", borderColor: "#2563eb" } : {}}
-        >
-          <MessageSquare className="h-5 w-5 text-neutral-700" />
-          <span className={showComments ? "text-blue-700 font-medium" : "text-neutral-700"}>Comentario</span>
-          <span className={showComments ? "text-blue-700 font-medium" : "text-neutral-700"}>{comments}</span>
-        </button>
-
-        {/* Compartir */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div>
-              <button
-                className={actionBtnStyle(false, true)}
-                type="button"
-              >
-                <Share2 className="h-5 w-5 text-neutral-700" />
-                <span className="text-neutral-700">Compartir</span>
-                <span className="text-neutral-700">{0}</span>
-              </button>
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleShare}>Copiar enlace</DropdownMenuItem>
-            <DropdownMenuItem onClick={shareWhatsapp}>Compartir en WhatsApp</DropdownMenuItem>
-            <DropdownMenuItem onClick={shareLinkedin}>Compartir en LinkedIn</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <CardFooter className="">
+        <PostCardActions
+          liked={liked}
+          likeCount={likeCount}
+          toggleLike={toggleLike}
+          recognize={recognize}
+          recognizeCnt={recognizeCnt}
+          toggleRecognize={toggleRecognize}
+          showComments={showComments}
+          comments={comments}
+          setShowComments={setShowComments}
+          handleShare={handleShare}
+          shareWhatsapp={shareWhatsapp}
+          shareLinkedin={shareLinkedin}
+        />
       </CardFooter>
       {/* Always render comments panel if there are any, or if showComments is on */}
       {(showComments && postId && currentUserId) && (
@@ -417,4 +191,3 @@ const PostCard = ({
 };
 
 export default PostCard;
-
