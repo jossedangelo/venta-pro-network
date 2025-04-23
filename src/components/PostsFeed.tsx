@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import PostCard from './PostCard';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +38,7 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         setIsRefreshing(true);
       }
       
+      // Consulta optimizada que obtiene publicaciones y perfiles en una sola consulta
       const { data: postsData, error } = await supabase
         .from('posts')
         .select(`
@@ -47,7 +49,13 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
           user_id,
           likes_count,
           comments_count,
-          recognize_count
+          recognize_count,
+          profiles (
+            first_name,
+            last_name,
+            role,
+            avatar_url
+          )
         `)
         .order('created_at', { ascending: false });
 
@@ -63,35 +71,7 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         return;
       }
 
-      const postsWithProfiles = await Promise.all(
-        postsData.map(async (post: any) => {
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('first_name, last_name, role, avatar_url')
-            .eq('id', post.user_id)
-            .single();
-
-          if (profileError) {
-            console.error('Error fetching profile for post:', profileError);
-            return {
-              ...post,
-              profiles: {
-                first_name: 'Usuario',
-                last_name: 'Desconocido',
-                role: '',
-                avatar_url: null
-              }
-            };
-          }
-
-          return {
-            ...post,
-            profiles: profileData
-          };
-        })
-      );
-      
-      setPosts(postsWithProfiles);
+      setPosts(postsData);
     } catch (error) {
       console.error('Error:', error);
       toast({
