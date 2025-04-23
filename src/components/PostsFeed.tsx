@@ -38,7 +38,7 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         setIsRefreshing(true);
       }
       
-      // Consulta optimizada que obtiene publicaciones y perfiles en una sola consulta
+      // Primero obtenemos las publicaciones
       const { data: postsData, error } = await supabase
         .from('posts')
         .select(`
@@ -49,13 +49,7 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
           user_id,
           likes_count,
           comments_count,
-          recognize_count,
-          profiles (
-            first_name,
-            last_name,
-            role,
-            avatar_url
-          )
+          recognize_count
         `)
         .order('created_at', { ascending: false });
 
@@ -71,7 +65,41 @@ export const PostsFeed = ({ refreshTrigger = 0 }) => {
         return;
       }
 
-      setPosts(postsData);
+      // Obtenemos los perfiles de los usuarios que hicieron las publicaciones
+      const userIds = [...new Set(postsData.map(post => post.user_id))];
+      
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, role, avatar_url')
+        .in('id', userIds);
+        
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        throw profilesError;
+      }
+
+      // Creamos un mapa de perfiles para acceso rápido
+      const profilesMap = (profilesData || []).reduce((acc: any, profile: any) => {
+        acc[profile.id] = profile;
+        return acc;
+      }, {});
+
+      // Combinamos las publicaciones con los datos de perfil
+      const postsWithProfiles = postsData.map((post: any) => {
+        const profile = profilesMap[post.user_id] || {
+          first_name: 'Usuario',
+          last_name: 'Desconocido',
+          role: '',
+          avatar_url: null
+        };
+        
+        return {
+          ...post,
+          profiles: profile
+        };
+      });
+      
+      setPosts(postsWithProfiles);
     } catch (error) {
       console.error('Error:', error);
       toast({
